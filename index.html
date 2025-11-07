@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나만의 홈페이지 대시보드</title>
 
+    <!-- [신규] 브라우저 탭 아이콘 (Favicon) 추가 -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="Icon_32x32-WWW.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <!-- / [수정] PNG 파일 예시로 변경 -->
+
+
     <!-- 1. 깜빡임 방지 스크립트 -->
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -27,7 +36,6 @@
     <!-- 4. SortableJS CDN (Drag and Drop) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
-    <!-- [수정] 폰트 파일용 style 태그 제거 -->
     
     <style>
         /* Inter 폰트 및 기본 스타일 적용 */
@@ -211,7 +219,7 @@
                     </form>
                 </div>
 
-                <!-- [추가] 화면 확대/축소 버튼 (위치 이동) -->
+                <!-- [수정] 화면 확대/축소 버튼 (헤더에 유지) -->
                 <div class="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-200 dark:bg-gray-700">
                     <button id="zoom-out-btn" class="p-1 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" title="화면 축소">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -228,28 +236,11 @@
                     </button>
                 </div>
 
-                <!-- [추가] 설정 모드 토글 버튼 -->
-                <!-- [수정] padding (p-2 -> p-1.5) -->
-                <button id="settings-toggle-btn" class="p-1.5 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                    <!-- [수정] icon size (h-6 w-6 -> h-5 w-5) -->
-                    <svg id="settings-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <!-- [수정] icon size (h-6 w-6 -> h-5 w-5) -->
-                    <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                <!-- ... 기존 다크 모드 토글 버튼 ... -->
-                <!-- [수정] padding (p-2 -> p-1.5) -->
-                <button id="theme-toggle" class="p-1.5 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                    <!-- [수정] icon size (h-6 w-6 -> h-5 w-5) -->
-                    <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    <!-- [수정] icon size (h-6 w-6 -> h-5 w-5) -->
-                    <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                </button>
+                <!-- [수정] 설정/테마 버튼은 아래 플로팅 컨테이너로 이동하고, 이 자리에는 공간만 남깁니다. -->
+                <!-- 모바일 레이아웃을 위해 이 공간은 필요하지 않을 수 있지만, 일단 비워둡니다. -->
+                <div class="hidden md:flex items-center gap-2 sm:gap-4">
+                    <!-- Placeholder for the space formerly occupied by settings/theme buttons -->
+                </div>
             </div>
         </header>
 
@@ -306,13 +297,13 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block -mt-1 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-6l-4 4m0 0l-4-4m4 4V3" />
                     </svg>
-                    설정 가져오기
+                    설정/데이터 가져오기
                 </button>
                 <button id="export-btn" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block -mt-1 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v13" />
                     </svg>
-                    설정 내보내기
+                    설정/데이터 내보내기
                 </button>
             </div>
             <!-- [추가] 가져오기용 숨겨진 파일 입력 -->
@@ -320,6 +311,27 @@
         </div>
     </div>
 
+    <!-- [신규] 플로팅 액션 버튼 컨테이너 -->
+    <!-- 화면 스크롤 시에도 오른쪽 하단에 고정되어 보입니다. -->
+    <div id="floating-actions" class="fixed right-4 bottom-4 z-50 flex flex-col space-y-3">
+        <!-- [이동된] 설정 모드 토글 버튼 -->
+        <button id="settings-toggle-btn" class="p-1.5 rounded-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white shadow-xl transition-colors">
+            <svg id="settings-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- [이동된] 다크 모드 토글 버튼 -->
+        <button id="theme-toggle" class="p-1.5 rounded-full bg-gray-700 dark:bg-gray-200 hover:bg-gray-800 dark:hover:bg-gray-300 text-white dark:text-gray-800 shadow-xl transition-colors">
+            <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
+    
     <!-- [추가] 사이트 수정/추가 모달 -->
     <div id="site-modal" class="modal-overlay modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
         <div class="modal-content bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl m-4 overflow-y-auto max-h-[90vh]">
@@ -470,19 +482,15 @@
 
         // --- [폰트 변경 기능 수정] ---
 
-        // [수정] 폰트 파일 관련 함수 제거
-        // function clearCustomFontStyle() { ... }
-
         /**
          * 지정된 폰트를 body에 적용하고 저장합니다.
          * @param {string} fontName - 적용할 폰트 이름
          */
-        function applyFont(fontName) { // [수정] isPersistent 파라미터 제거
+        function applyFont(fontName) {
             // [수정] fontName이 null이거나 undefined일 경우 'default'로 처리
             fontName = fontName || 'default'; 
             
             localStorage.setItem('dashboardFont', fontName);
-            // [수정] 폰트 파일 관련 로직 제거
             
             const customContainer = document.getElementById('custom-font-container');
 
@@ -511,7 +519,7 @@
             const fontSelector = document.getElementById('font-selector');
             
             // 1. 폰트 스타일 적용 (영구 저장된 폰트만)
-            applyFont(savedFont); // [수정] 파라미터 제거
+            applyFont(savedFont);
 
             // 2. UI(드롭다운, 입력 필드) 상태 복원
             const standardFonts = Array.from(fontSelector.options).map(opt => opt.value);
@@ -528,14 +536,6 @@
             }
         }
 
-        // [수정] 폰트 파일 관련 함수 제거
-        // function handleFontFileSelect(e) { ... }
-
-
-        // --- [수정] 3.1 -> 3.2. 기본 사이트 데이터 ---
-        // ... (기존 코드와 동일) ...
-        const defaultSiteData = [];
-
         // --- 3.2 -> 3.3. 전역 변수 및 DOM 요소 선택 ---
         let siteData = []; // 데이터를 저장할 전역 변수
         let dashboardTitle = "My Dashboard"; // [추가] 대시보드 제목
@@ -547,11 +547,12 @@
 
         const mainContent = document.getElementById('main-content');
         const currentTimeEl = document.getElementById('currentTime');
+        // [수정] 테마 토글 버튼 참조는 플로팅 영역의 버튼을 사용합니다.
         const themeToggleBtn = document.getElementById('theme-toggle');
         const lightIcon = document.getElementById('theme-icon-light');
         const darkIcon = document.getElementById('theme-icon-dark');
 
-        // [추가] 설정 모드 요소
+        // [수정] 설정 모드 요소 참조는 플로팅 영역의 버튼을 사용합니다.
         const settingsToggleBtn = document.getElementById('settings-toggle-btn');
         const settingsIcon = document.getElementById('settings-icon');
         const closeIcon = document.getElementById('close-icon');
@@ -573,7 +574,7 @@
         const searchEngineRadios = document.querySelectorAll('input[name="search-engine"]');
 
 
-        // --- [추가] 3.3 -> 3.4. 데이터 관리 함수 (localStorage) ---
+        // --- [수정] 3.3 -> 3.4. 데이터 관리 함수 (localStorage) ---
         // [수정] 데이터 로드 로직 (객체 구조로 변경 및 마이그레이션)
         function loadData() {
             let dataString = localStorage.getItem('myDashboardData');
@@ -642,15 +643,30 @@
             showToast("변경 사항이 저장되었습니다.");
         }
 
+
+        /**
+         * 파일 이름에 사용할 현재 시각 문자열 (YYYY-MM-DD_HHMMSS)을 생성합니다.
+         */
+        function getExportDateTimeString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            return `${year}-${month}-${day}_${hours}${minutes}${seconds}`;
+        }
+
+
         // --- [추가] 3.4 -> 3.5. 내보내기/가져오기 함수 ---
         function exportData() {
             try {
-                // 현재 localStorage에 저장된 모든 설정을 하나의 객체로 모읍니다.
                 const dataToExport = {
                     dashboardData: JSON.parse(localStorage.getItem('myDashboardData') || '{}'),
                     theme: localStorage.getItem('theme') || 'light',
                     searchEngine: localStorage.getItem('searchEngine') || 'google',
-                    // [수정] 폰트 설정도 함께 내보냅니다.
                     zoomLevel: localStorage.getItem('dashboardZoomLevel') || '1.0',
                     font: localStorage.getItem('dashboardFont') || 'default'
                 };
@@ -659,27 +675,56 @@
                 const jsonString = JSON.stringify(dataToExport, null, 2);
                 // Blob 객체 생성
                 const blob = new Blob([jsonString], { type: 'application/json' });
-                // 다운로드 URL 생성
-                const url = URL.createObjectURL(blob);
                 
-                // 임시 다운로드 링크 생성 및 클릭
-                const a = document.createElement('a');
-                a.href = url;
-                // 파일 이름 (예: my-dashboard-backup-2025-11-02.json)
-                a.download = `my-dashboard-backup-${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(a);
-                a.click();
-                
-                // 리소스 정리
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showToast("설정이 파일로 내보내졌습니다.");
+                const defaultName = `my-dashboard-backup-${getExportDateTimeString()}.json`;
+
+                // [수정] "다른 이름으로 저장" 기능 구현 (폴더 선택 기능)
+                if ('showSaveFilePicker' in window) {
+                    // 1. 최신 브라우저: "다른 이름으로 저장" 대화상자 사용
+                    window.showSaveFilePicker({
+                        suggestedName: defaultName,
+                        types: [{
+                            description: 'JSON Files',
+                            accept: { 'application/json': ['.json'] },
+                        }],
+                    }).then(async (handle) => {
+                        // 파일에 데이터 쓰기
+                        const writable = await handle.createWritable();
+                        await writable.write(blob);
+                        await writable.close();
+                        showToast("파일이 저장되었습니다.");
+                    }).catch(error => {
+                        // 사용자가 "취소"를 누른 경우
+                        if (error.name === 'AbortError') {
+                            console.log('File save cancelled by user.');
+                            showToast("파일 저장을 취소했습니다.", false, 1500);
+                        } else {
+                            // 기타 오류
+                            console.error("Export failed:", error);
+                            showToast("내보내기에 실패했습니다. (Error: " + error.message + ")", true);
+                        }
+                    });
+
+                } else {
+                    // 2. 구형 브라우저: 기존의 자동 다운로드 방식 사용 (폴백)
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = defaultName; // [수정] 시간 포함 파일명 적용
+                    document.body.appendChild(a);
+                    a.click();
+
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast("설정이 파일로 내보내졌습니다. (자동 다운로드)");
+                }
+
             } catch (error) {
                 console.error("Export failed:", error);
                 showToast("내보내기에 실패했습니다.", true);
             }
         }
+
 
         function importData(e) {
             const file = e.target.files[0];
@@ -1076,10 +1121,6 @@
                 }
             });
 
-            // [수정] 폰트 파일 리스너 제거
-            // document.getElementById('font-file-input').addEventListener('change', handleFontFileSelect);
-
-
             // 설정 모드 토글
             settingsToggleBtn.addEventListener('click', toggleSettings);
 
@@ -1182,7 +1223,6 @@
                 reader.readAsDataURL(file);
             });
 
-            // [수정] 오류가 있던 'D' 문자 제거
             // 사이트 폼 제출
             siteForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -1240,6 +1280,13 @@
             
             // 파일이 실제로 선택되었을 때
             document.getElementById('import-file-input').addEventListener('change', importData);
+            
+            // 검색창 제출 시 입력창 비우기
+            searchForm.addEventListener('submit', () => {
+                setTimeout(() => {
+                    searchInput.value = '';
+                }, 100);
+            });
         }
 
 
@@ -1259,4 +1306,3 @@
     </script>
 </body>
 </html>
-
