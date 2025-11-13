@@ -287,11 +287,26 @@
                 <div class="hidden md:flex items-center gap-2 sm:gap-4">
                     <!-- Placeholder for the space formerly occupied by settings/theme buttons -->
                 </div>
-            </div>        </header>
-
-        <!-- [신규] 1.5. 카테고리 내비게이션 (줄바꿈 방식, 헤더 아래로 이동) -->
-        <nav id="category-nav-wrapper" class="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 rounded-lg mb-8 md:mb-12 px-4 sm:px-0">
-            <!-- [수정] flex-wrap을 추가하고 overflow-x-auto를 제거하여 줄바꿈을 허용합니다. -->
+            			</div>        </header>
+            
+                    <!-- [신규] D-Day 및 알림 요약 박스 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12 px-4 sm:px-0">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2">D-Day</h3>
+                            <div id="dday-summary-box" class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                                <p class="text-gray-500">표시할 D-Day가 없습니다.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">Upcoming Notifications (3일 이내)</h3>
+                            <div id="alarm-summary-box" class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
+                                <p class="text-gray-500">3일 이내의 알림이 없습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- [신규] 1.5. 카테고리 내비게이션 (줄바꿈 방식, 헤더 아래로 이동) -->
+                    <nav id="category-nav-wrapper" class="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 rounded-lg mb-8 md:mb-12 px-4 sm:px-0">            <!-- [수정] flex-wrap을 추가하고 overflow-x-auto를 제거하여 줄바꿈을 허용합니다. -->
             <div id="category-nav" class="flex flex-wrap gap-2 p-3">
                 <!-- 카테고리 탭 목록이 여기에 삽입됩니다. -->
             </div>
@@ -464,6 +479,14 @@
                     <label for="category-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">카테고리 이름</label>
                     <input type="text" id="category-name" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
+                <!-- [신규] 카테고리 타입 선택 -->
+                <div class="mb-4">
+                    <label for="category-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">카테고리 타입</label>
+                    <select id="category-type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="links">링크</option>
+                        <option value="events">이벤트 (D-day/알림)</option>
+                    </select>
+                </div>
                 <div class="mb-4">
                     <label for="category-color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">카테고리 색상</label>
                     <input type="color" id="category-color" class="w-full h-10 p-1 border border-gray-300 dark:border-gray-600 rounded-md" value="#3B82F6">
@@ -501,13 +524,94 @@
             <div class="flex justify-end gap-3">
                 <button type="button" id="cancel-confirm-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-md transition-colors">취소</button>
                 <button type="button" id="confirm-delete-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md transition-colors">삭제</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- [추가] 토스트 알림 (피드백) -->
-    <div id="toast" class="toast fixed bottom-10 right-10 bg-green-600 text-white px-5 py-3 rounded-lg shadow-xl z-[999]">
-        저장되었습니다.
+            			</div>
+                    </div>
+                </div>
+            
+                <!-- [신규] 이벤트 추가/수정 모달 -->
+                <div id="event-modal" class="modal-overlay modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                    <div class="modal-content bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl m-4 overflow-y-auto max-h-[90vh]">
+                        <h3 id="event-modal-title" class="text-xl font-semibold mb-4">이벤트 편집</h3>
+                        <form id="event-form">
+                            <input type="hidden" id="event-category-index">
+                            <input type="hidden" id="event-index">
+                            
+                            <div class="mb-4">
+                                <label for="event-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">타입</label>
+                                <select id="event-type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="dday">D-Day</option>
+                                    <option value="alarm">알림 (Notification)</option>
+                                </select>
+                            </div>
+            
+                            <div class="mb-4">
+                                <label for="event-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름 (제목)</label>
+                                <input type="text" id="event-name" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+            
+                                                            <div class="mb-4">
+            
+                                                                <label for="event-icon" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">아이콘 (이모지)</label>
+            
+                                                                <input type="text" id="event-icon" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+                                                                <!-- [신규] 이모지 선택 버튼 -->
+            
+                                                                                    <div id="emoji-selector" class="mt-2 grid grid-cols-5 gap-2">
+            
+                                                                                        <button type="button" title="기념일/생일" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🎂</button>
+            
+                                                                                        <button type="button" title="목표" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🎯</button>
+            
+                                                                                        <button type="button" title="업무" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">💼</button>
+            
+                                                                                        <button type="button" title="시험/공부" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">📝</button>
+            
+                                                                                        <button type="button" title="중요" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">📌</button>
+            
+                                                                                        <button type="button" title="알림" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🔔</button>
+            
+                                                                                        <button type="button" title="일정" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">📅</button>
+            
+                                                                                        <button type="button" title="프로젝트/시작" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🚀</button>
+            
+                                                                                        <button type="button" title="아이디어" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">💡</button>
+            
+                                                                                        <button type="button" title="축하" class="p-2 text-lg leading-none rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🎉</button>
+            
+                                                                                    </div>
+            
+                                                            </div>            
+                            <div id="dday-fields" class="mb-4">
+                                <label for="event-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">D-Day 날짜</label>
+                                <input type="date" id="event-date" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+            
+                                            <div id="alarm-fields" class="mb-4 hidden space-y-4">
+                                                <div>
+                                                    <label for="event-datetime" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">알림 날짜 및 시간</label>
+                                                    <input type="datetime-local" id="event-datetime" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                </div>
+                                                <div>
+                                                    <label for="event-recurrence" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">반복</label>
+                                                                            <select id="event-recurrence" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                                                <option value="none">반복 안 함</option>
+                                                                                <option value="daily">매일</option>
+                                                                                <option value="weekly">매주</option>
+                                                                                <option value="monthly">매월</option>
+                                                                                <option value="yearly">매년</option>
+                                                                            </select>                                                </div>
+                                            </div>            
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" id="cancel-event-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-md transition-colors">취소</button>
+                                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md transition-colors">저장</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            
+                <!-- [추가] 토스트 알림 (피드백) -->
+                <div id="toast" class="toast fixed bottom-10 right-10 bg-green-600 text-white px-5 py-3 rounded-lg shadow-xl z-[999]">        저장되었습니다.
     </div>
 
 
@@ -656,6 +760,7 @@
         const categoryForm = document.getElementById('category-form');
         const titleModal = document.getElementById('title-modal'); // [추가]
         const titleForm = document.getElementById('title-form'); // [추가]
+        const eventModal = document.getElementById('event-modal'); // [신규]
         const toastEl = document.getElementById('toast');
 
         // [추가] 검색 폼 요소
@@ -709,14 +814,32 @@
                     needsMigration = true;
                 }
             }
+
+            // [버그 수정] 저장된 데이터에 null 또는 undefined 항목이 있을 경우 제거
+            const originalLength = siteData.length;
+            siteData = siteData.filter(category => category); // null, undefined 등 falsy 값 제거
+            if (siteData.length < originalLength) {
+                needsMigration = true; // 데이터가 정리되었으므로 다시 저장해야 함
+            }
             
+            // [신규] 데이터 마이그레이션: 모든 카테고리에 'type' 속성 부여
+            siteData.forEach(category => {
+                if (!category.type) {
+                    category.type = 'links'; // 기존 데이터는 'links' 타입으로 지정
+                    needsMigration = true;
+                }
+            });
+
             // [신규] 모든 사이트 객체에 'clicks' 속성이 있는지 확인하고, 없으면 0으로 초기화
             siteData.forEach(category => {
-                category.sites.forEach(site => {
-                    if (typeof site.clicks === 'undefined') {
-                        site.clicks = 0;
-                    }
-                });
+                // 'links' 타입 카테고리에만 'clicks' 속성 초기화 적용
+                if (category.type === 'links') {
+                    category.sites.forEach(site => {
+                        if (typeof site.clicks === 'undefined') {
+                            site.clicks = 0;
+                        }
+                    });
+                }
             });
             
             if (needsMigration) {
@@ -736,7 +859,8 @@
             // UI 업데이트
             dashboardTitleEl.textContent = dashboardTitle;
             if (shouldRender) {
-                renderCards(); 
+                renderCards();
+                renderSummaryBoxes(); // [신규] 요약 박스 업데이트
                 if (options.scrollY) {
                     // 렌더링 후, 저장된 스크롤 위치로 복원
                     window.scrollTo(0, options.scrollY);
@@ -1000,6 +1124,118 @@
             return popularSites;
         }
 
+        /** [신규] 헤더 요약 박스 렌더링 함수 */
+        function renderSummaryBoxes() {
+            const ddayBox = document.getElementById('dday-summary-box');
+            const alarmBox = document.getElementById('alarm-summary-box');
+
+            let allEvents = [];
+            siteData.forEach(cat => {
+                if (cat.type === 'events') {
+                    allEvents.push(...cat.sites);
+                }
+            });
+
+            const now = new Date();
+            const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
+            const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+            // 1. D-Day 처리 (기존과 동일)
+            const ddays = allEvents
+                .filter(e => e.type === 'dday' && e.targetDate)
+                .map(e => {
+                    const targetDate = new Date(new Date(e.targetDate).setHours(0, 0, 0, 0));
+                    const diffTime = targetDate.getTime() - todayMidnight.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return { ...e, diffDays };
+                })
+                .sort((a, b) => a.diffDays - b.diffDays);
+
+            if (ddays.length > 0) {
+                ddayBox.innerHTML = ddays.map(dday => {
+                    let ddayText = `D-${dday.diffDays}`;
+                    if (dday.diffDays === 0) ddayText = 'D-Day';
+                    else if (dday.diffDays < 0) ddayText = `D+${Math.abs(dday.diffDays)}`;
+                    return `<div class="flex justify-between items-center"><span>${dday.icon || '📅'} ${dday.name}</span><span class="font-semibold text-red-500">${ddayText}</span></div>`;
+                }).join('');
+            } else {
+                ddayBox.innerHTML = '<p class="text-gray-500">표시할 D-Day가 없습니다.</p>';
+            }
+
+            // 2. 알림 처리 (반복 기능 수정)
+            const upcomingAlarms = allEvents
+                .filter(e => e.type === 'alarm' && e.targetDate)
+                .flatMap(event => { // map -> flatMap으로 변경하여 여러 개의 발생 시간을 반환하도록 함
+                    const occurrences = [];
+                    const startDate = new Date(event.targetDate);
+                    const targetHours = startDate.getHours();
+                    const targetMinutes = startDate.getMinutes();
+
+                    if (event.recurrence === 'daily') {
+                        for (let i = 0; i < 4; i++) { // 오늘부터 3일 후까지, 총 4일간 확인
+                            let potentialDate = new Date(now);
+                            potentialDate.setDate(now.getDate() + i);
+                            potentialDate.setHours(targetHours, targetMinutes, 0, 0);
+
+                            if (potentialDate.getTime() >= now.getTime() && potentialDate.getTime() <= threeDaysFromNow.getTime()) {
+                                occurrences.push({ ...event, occurrence: potentialDate });
+                            }
+                        }
+                    } else {
+                        let nextOccurrence = null;
+                        switch (event.recurrence) {
+                            case 'weekly':
+                                let weeklyNext = new Date(now);
+                                weeklyNext.setHours(targetHours, targetMinutes, 0, 0);
+                                weeklyNext.setDate(now.getDate() + (startDate.getDay() - now.getDay() + 7) % 7);
+                                if (weeklyNext.getTime() < now.getTime()) {
+                                    weeklyNext.setDate(weeklyNext.getDate() + 7);
+                                }
+                                nextOccurrence = weeklyNext;
+                                break;
+                            case 'monthly':
+                                let monthlyNext = new Date(now);
+                                monthlyNext.setHours(targetHours, targetMinutes, 0, 0);
+                                monthlyNext.setDate(startDate.getDate());
+                                if (monthlyNext.getTime() < now.getTime()) {
+                                    monthlyNext.setMonth(monthlyNext.getMonth() + 1);
+                                }
+                                if (monthlyNext.getDate() !== startDate.getDate()) {
+                                    monthlyNext.setDate(0);
+                                }
+                                nextOccurrence = monthlyNext;
+                                break;
+                            case 'yearly':
+                                let yearlyNext = new Date(now);
+                                yearlyNext.setHours(targetHours, targetMinutes, 0, 0);
+                                yearlyNext.setMonth(startDate.getMonth());
+                                yearlyNext.setDate(startDate.getDate());
+                                if (yearlyNext.getTime() < now.getTime()) {
+                                    yearlyNext.setFullYear(yearlyNext.getFullYear() + 1);
+                                }
+                                nextOccurrence = yearlyNext;
+                                break;
+                            default: // 'none'
+                                nextOccurrence = startDate;
+                                break;
+                        }
+                        if (nextOccurrence && nextOccurrence.getTime() >= now.getTime() && nextOccurrence.getTime() <= threeDaysFromNow.getTime()) {
+                            occurrences.push({ ...event, occurrence: nextOccurrence });
+                        }
+                    }
+                    return occurrences;
+                })
+                .sort((a, b) => a.occurrence.getTime() - b.occurrence.getTime());
+
+            if (upcomingAlarms.length > 0) {
+                alarmBox.innerHTML = upcomingAlarms.map(alarm => {
+                    return `<div class="flex justify-between items-center"><span>${alarm.icon || '🔔'} ${alarm.name}</span><span class="font-semibold text-green-500">${alarm.occurrence.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span></div>`;
+                }).join('');
+            } else {
+                alarmBox.innerHTML = '<p class="text-gray-500">3일 이내의 알림이 없습니다.</p>';
+            }
+        }
+
         // --- [수정] 3.8 -> 3.9. 카드 렌더링 함수 (수정) ---
         function renderCards() {
             // [신규] 스크롤 점프 방지를 위해 현재 높이를 min-height로 설정
@@ -1097,79 +1333,145 @@
                 }
 
 
-                // 4. 각 사이트 카드 생성
+                // 4. 각 사이트/이벤트 카드 생성
                 category.sites.forEach((site, siteIndex) => {
-                    const card = document.createElement('a');
-                    card.href = site.url;
-                    card.target = '_blank';
-                    card.rel = 'noopener noreferrer';
-                    card.className = `
-                        site-card relative block p-5 bg-white dark:bg-gray-800 
-                        rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-gray-700/50 
-                        transition-all duration-300 transform hover:scale-[1.03]
-                    `;
-                    // 인기 카테고리 사이트는 드래그 불가
-                    if (editMode && !category.isPopularCategory) {
-                        card.classList.add('cursor-move');
-                    }
+                    const categoryType = category.type || 'links';
 
-                    // [신규] 클릭 이벤트 리스너 추가 (클릭 수 추적)
-                    card.addEventListener('click', (e) => {
-                        // 설정 모드가 아닐 때만 클릭 수 추적
-                        if (!editMode) {
-                            let targetCategoryIndex;
-                            let targetSiteIndex;
+                    if (categoryType === 'links' || category.isPopularCategory) {
+                        // [기존] 사이트 카드 렌더링 로직
+                        const card = document.createElement('a');
+                        card.href = site.url;
+                        card.target = '_blank';
+                        card.rel = 'noopener noreferrer';
+                        card.className = `
+                            site-card relative block p-5 bg-white dark:bg-gray-800 
+                            rounded-xl shadow-md hover:shadow-lg dark:hover:shadow-gray-700/50 
+                            transition-all duration-300 transform hover:scale-[1.03]
+                        `;
+                        if (editMode && !category.isPopularCategory) {
+                            card.classList.add('cursor-move');
+                        }
 
-                            if (category.isPopularCategory) {
-                                // 인기 카테고리에서 클릭된 경우, 저장된 원본 인덱스를 사용
-                                targetCategoryIndex = site.originalCategoryIndex;
-                                targetSiteIndex = site.originalSiteIndex;
-                            } else {
-                                // 일반 카테고리에서 클릭된 경우, 인덱스 보정
-                                const popularCategoryExists = document.getElementById('category-popular') !== null;
-                                targetCategoryIndex = popularCategoryExists ? currentRenderIndex - 1 : currentRenderIndex;
-                                targetSiteIndex = siteIndex;
+                        card.addEventListener('click', (e) => {
+                            if (!editMode) {
+                                let targetCategoryIndex;
+                                let targetSiteIndex;
+
+                                if (category.isPopularCategory) {
+                                    targetCategoryIndex = site.originalCategoryIndex;
+                                    targetSiteIndex = site.originalSiteIndex;
+                                } else {
+                                    const popularCategoryExists = document.getElementById('category-popular') !== null;
+                                    targetCategoryIndex = popularCategoryExists ? currentRenderIndex - 1 : currentRenderIndex;
+                                    targetSiteIndex = siteIndex;
+                                }
+
+                                if (targetCategoryIndex !== undefined && targetSiteIndex !== undefined &&
+                                    siteData[targetCategoryIndex] && siteData[targetCategoryIndex].sites[targetSiteIndex]) {
+                                    siteData[targetCategoryIndex].sites[targetSiteIndex].clicks++;
+                                    saveData(true, { scrollY: window.scrollY, showToast: false });
+                                }
                             }
+                        });
 
-                            if (targetCategoryIndex !== undefined && targetSiteIndex !== undefined &&
-                                targetCategoryIndex >= 0 && targetCategoryIndex < siteData.length &&
-                                targetSiteIndex >= 0 && targetSiteIndex < siteData[targetCategoryIndex].sites.length) {
-                                siteData[targetCategoryIndex].sites[targetSiteIndex].clicks++;
-                                saveData(true, { scrollY: window.scrollY, showToast: false }); // 실시간 렌더링, 스크롤 위치 유지, 토스트 숨김
+                        card.innerHTML = `
+                            ${category.isPopularCategory ? '' : `
+                            <div class="edit-card-controls absolute top-2 right-2 space-x-1">
+                                <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800"
+                                        data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="사이트 수정">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                                </button>
+                                <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800"
+                                        data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="사이트 삭제">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </div>
+                            `}
+                            <div class="flex items-center space-x-4">
+                                ${(site.icon && (site.icon.startsWith('data:image') || site.icon.startsWith('http')))
+                                    ? `<img src="${site.icon}" alt="${site.name} icon" class="flex-shrink-0 w-10 h-10 rounded-lg object-cover">`
+                                    : `<span class="flex-shrink-0 text-3xl w-10 h-10 flex items-center justify-center">${site.icon || '🌐'}</span>`
+                                }
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${site.name}</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">${site.description || ''}</p>
+                                    ${category.isPopularCategory && site.clicks > 0 ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">클릭: ${site.clicks}</p>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+
+                    } else if (categoryType === 'events') {
+                        // [신규] 이벤트 카드 렌더링 로직
+                        const card = document.createElement('div');
+                        card.className = `site-card relative block p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md`;
+                        if (editMode) {
+                            card.classList.add('cursor-move');
+                        }
+
+                        let eventInfoHtml = '';
+                        if (site.targetDate) {
+                            const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
+                            const targetDate = new Date(site.targetDate);
+
+                            if (site.type === 'dday') {
+                                const targetDateMidnight = new Date(new Date(site.targetDate).setHours(0, 0, 0, 0));
+                                const diffTime = targetDateMidnight.getTime() - todayMidnight.getTime();
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                
+                                let ddayText = `D-${diffDays}`;
+                                if (diffDays === 0) ddayText = 'D-Day';
+                                else if (diffDays < 0) ddayText = `D+${Math.abs(diffDays)}`;
+                                
+                                eventInfoHtml = `<h3 class="text-xl font-bold text-red-500">${ddayText}</h3>`;
+                            } else if (site.type === 'alarm') {
+                                const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                                switch (site.recurrence) {
+                                    case 'daily':
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매일 ${time}</p>`;
+                                        break;
+                                    case 'weekly':
+                                        const days = ['일', '월', '화', '수', '목', '금', '토'];
+                                        const day = days[targetDate.getDay()];
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매주 ${day}요일 ${time}</p>`;
+                                        break;
+                                    case 'monthly':
+                                        const date = targetDate.getDate();
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매월 ${date}일 ${time}</p>`;
+                                        break;
+                                    case 'yearly':
+                                        const month = targetDate.getMonth() + 1;
+                                        const dayOfMonth = targetDate.getDate();
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매년 ${month}월 ${dayOfMonth}일 ${time}</p>`;
+                                        break;
+                                    default: // 'none'
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">${targetDate.toLocaleString('ko-KR')}</p>`;
+                                        break;
+                                }
                             }
                         }
-                    });
 
-                    card.innerHTML = `
-                        <!-- [추가] 카드 편집 버튼 -->
-                        ${category.isPopularCategory ? '' : `
-                        <div class="edit-card-controls absolute top-2 right-2 space-x-1">
-                            <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800"
-                                    data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="사이트 수정">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
-                            </button>
-                            <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800"
-                                    data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="사이트 삭제">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            </button>
-                        </div>
-                        `}
-
-                        <div class="flex items-center space-x-4">
-                            ${(site.icon && (site.icon.startsWith('data:image') || site.icon.startsWith('http')))
-                                // [수정] 이미지 URL 또는 Base64일 경우 <img> 태그 렌더링
-                                ? `<img src="${site.icon}" alt="${site.name} icon" class="flex-shrink-0 w-10 h-10 rounded-lg object-cover">`
-                                // [수정] 그 외 (이모지 등)
-                                : `<span class="flex-shrink-0 text-3xl w-10 h-10 flex items-center justify-center">${site.icon || '🌐'}</span>`
-                            }
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${site.name}</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">${site.description}</p>
-                                ${category.isPopularCategory && site.clicks > 0 ? `<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">클릭: ${site.clicks}</p>` : ''}
+                        card.innerHTML = `
+                            <div class="edit-card-controls absolute top-2 right-2 space-x-1">
+                                <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800"
+                                        data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                                </button>
+                                <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800"
+                                        data-category-index="${currentRenderIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </button>
                             </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
+                            <div class="flex items-center space-x-4">
+                                <span class="flex-shrink-0 text-3xl w-10 h-10 flex items-center justify-center">${site.icon || '📌'}</span>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${site.name}</h3>
+                                    ${eventInfoHtml}
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    }
                 });
 
                 section.appendChild(grid);
@@ -1276,6 +1578,50 @@
             siteModal.classList.remove('modal-hidden');
         }
 
+        /** [신규] 이벤트 모달 표시 함수 */
+        function showEventModal(categoryIndex, eventIndex = null) {
+            const eventForm = document.getElementById('event-form');
+            eventForm.reset();
+            
+            document.getElementById('event-category-index').value = categoryIndex;
+
+            const ddayFields = document.getElementById('dday-fields');
+            const alarmFields = document.getElementById('alarm-fields');
+
+            if (eventIndex !== null) {
+                // 수정 모드
+                document.getElementById('event-modal-title').textContent = "이벤트 수정";
+                document.getElementById('event-index').value = eventIndex;
+                const event = siteData[categoryIndex].sites[eventIndex];
+                
+                document.getElementById('event-type').value = event.type;
+                document.getElementById('event-name').value = event.name;
+                document.getElementById('event-icon').value = event.icon;
+
+                if (event.type === 'dday') {
+                    ddayFields.classList.remove('hidden');
+                    alarmFields.classList.add('hidden');
+                    document.getElementById('event-date').value = event.targetDate;
+                } else if (event.type === 'alarm') {
+                    ddayFields.classList.add('hidden');
+                    alarmFields.classList.remove('hidden');
+                    document.getElementById('event-datetime').value = event.targetDate;
+                    document.getElementById('event-recurrence').value = event.recurrence || 'none'; // [신규] 반복 설정
+                }
+
+            } else {
+                // 추가 모드
+                document.getElementById('event-modal-title').textContent = "새 이벤트 추가";
+                document.getElementById('event-index').value = '';
+                document.getElementById('event-recurrence').value = 'none'; // [신규] 기본값
+                // 기본으로 D-Day 필드 표시
+                ddayFields.classList.remove('hidden');
+                alarmFields.classList.add('hidden');
+            }
+            
+            eventModal.classList.remove('modal-hidden');
+        }
+
         // [수정] 누락되었던 showCategoryModal 함수 추가
         function showCategoryModal(categoryIndex = null) {
             categoryForm.reset();
@@ -1285,11 +1631,13 @@
                 document.getElementById('edit-category-index').value = categoryIndex;
                 document.getElementById('category-name').value = siteData[categoryIndex].category;
                 document.getElementById('category-color').value = siteData[categoryIndex].color || '#3B82F6';
+                document.getElementById('category-type').value = siteData[categoryIndex].type || 'links'; // 타입 설정
             } else {
                 // 추가 모드
                 document.getElementById('category-modal-title').textContent = "새 카테고리 추가";
                 document.getElementById('edit-category-index').value = '';
                 document.getElementById('category-color').value = '#3B82F6'; // 새 카테고리 추가 시 기본 색상
+                document.getElementById('category-type').value = 'links'; // 기본 타입은 'links'
             }
             categoryModal.classList.remove('modal-hidden');
         }
@@ -1343,6 +1691,7 @@
             siteModal.classList.add('modal-hidden');
             categoryModal.classList.add('modal-hidden');
             titleModal.classList.add('modal-hidden');
+            eventModal.classList.add('modal-hidden'); // [신규]
             hideConfirmModal(); // [신규] 삭제 확인 모달도 함께 닫기
         }
 
@@ -1373,12 +1722,24 @@
                 handle: '.category-title-wrapper', // 카테고리 제목 영역을 핸들로 사용
                 ghostClass: 'ghost-category',
                 onEnd: (evt) => {
-                    // [수정] 렌더링 전 스크롤 위치 저장
                     const scrollY = window.scrollY;
 
+                    // [버그 수정] '자주 방문하는 사이트' 카테고리가 표시될 때 인덱스 보정
+                    const popularCategoryExists = document.getElementById('category-popular') !== null;
+                    const oldIndex = popularCategoryExists ? evt.oldIndex - 1 : evt.oldIndex;
+                    const newIndex = popularCategoryExists ? evt.newIndex - 1 : evt.newIndex;
+
+                    // '자주 방문하는 사이트' 카테고리 자체를 드래그하려는 경우(oldIndex가 -1)를 방지
+                    if (oldIndex < 0 || newIndex < 0) {
+                        // 잘못된 드래그이므로 UI를 원래대로 되돌리기 위해 다시 렌더링
+                        renderCards();
+                        window.scrollTo(0, scrollY);
+                        return;
+                    }
+
                     // siteData 배열 순서 변경
-                    const item = siteData.splice(evt.oldIndex, 1)[0];
-                    siteData.splice(evt.newIndex, 0, item);
+                    const item = siteData.splice(oldIndex, 1)[0];
+                    siteData.splice(newIndex, 0, item);
                     
                     // 저장 및 화면 다시 렌더링 (인덱스 동기화 및 스크롤 위치 복원)
                     saveData(true, { scrollY: scrollY });
@@ -1392,9 +1753,15 @@
                     return;
                 }
                 
+                // [신규] 카테고리 타입에 따라 드래그 그룹 분리
+                const categoryRenderIndex = parseInt(grid.dataset.categoryIndex, 10);
+                const popularCategoryExists = document.getElementById('category-popular') !== null;
+                const realIndex = popularCategoryExists ? categoryRenderIndex - 1 : categoryRenderIndex;
+                const categoryType = (realIndex >= 0 && siteData[realIndex]) ? siteData[realIndex].type : 'links';
+
                 const s = new Sortable(grid, {
                     animation: 150,
-                    group: 'sites', // 카테고리 간 카드 이동 허용
+                    group: categoryType === 'events' ? 'events' : 'sites', // 'sites' 그룹과 'events' 그룹 분리
                     ghostClass: 'ghost-card',
                     onEnd: (evt) => {
                         // [수정] 렌더링 전 스크롤 위치 저장
@@ -1645,7 +2012,12 @@
                 if (addSiteBtn) {
                     e.preventDefault();
                     const realIndex = getRealCategoryIndex(addSiteBtn.dataset.categoryIndex);
-                    showSiteModal(realIndex);
+                    // [신규] 카테고리 타입에 따라 다른 모달 호출
+                    if (siteData[realIndex] && siteData[realIndex].type === 'events') {
+                        showEventModal(realIndex);
+                    } else {
+                        showSiteModal(realIndex);
+                    }
                 } 
                 else if (editCategoryBtn) {
                     e.preventDefault();
@@ -1666,7 +2038,13 @@
                 else if (editSiteBtn) {
                     e.preventDefault();
                     const realIndex = getRealCategoryIndex(editSiteBtn.dataset.categoryIndex);
-                    showSiteModal(realIndex, editSiteBtn.dataset.siteIndex);
+                    const siteIndex = editSiteBtn.dataset.siteIndex;
+                    // [신규] 카테고리 타입에 따라 다른 모달 호출
+                    if (siteData[realIndex] && siteData[realIndex].type === 'events') {
+                        showEventModal(realIndex, siteIndex);
+                    } else {
+                        showSiteModal(realIndex, siteIndex);
+                    }
                 } 
                 else if (deleteSiteBtn) {
                     e.preventDefault();
@@ -1700,7 +2078,28 @@
             document.getElementById('cancel-site-btn').addEventListener('click', hideModals);
             document.getElementById('cancel-category-btn').addEventListener('click', hideModals);
             document.getElementById('cancel-title-btn').addEventListener('click', hideModals); // [추가]
+            document.getElementById('cancel-event-btn').addEventListener('click', hideModals); // [신규]
             
+            // [신규] 이벤트 모달 타입 변경 시 필드 토글
+            document.getElementById('event-type').addEventListener('change', (e) => {
+                const ddayFields = document.getElementById('dday-fields');
+                const alarmFields = document.getElementById('alarm-fields');
+                if (e.target.value === 'dday') {
+                    ddayFields.classList.remove('hidden');
+                    alarmFields.classList.add('hidden');
+                } else {
+                    ddayFields.classList.add('hidden');
+                    alarmFields.classList.remove('hidden');
+                }
+            });
+
+            // [신규] 이모지 선택기 버튼 이벤트
+            document.getElementById('emoji-selector').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    document.getElementById('event-icon').value = e.target.textContent;
+                }
+            });
+
             // 모달 외부 클릭 시 닫기
             siteModal.addEventListener('click', (e) => {
                 if (e.target === siteModal) hideModals();
@@ -1710,6 +2109,9 @@
             });
             titleModal.addEventListener('click', (e) => { // [추가]
                 if (e.target === titleModal) hideModals();
+            });
+            eventModal.addEventListener('click', (e) => { // [신규]
+                if (e.target === eventModal) hideModals();
             });
 
             // [추가] 파일 입력 변경 이벤트 (FileReader로 Base64 인코딩)
@@ -1769,12 +2171,14 @@
                 const categoryIndex = document.getElementById('edit-category-index').value;
                 const categoryName = document.getElementById('category-name').value;
                 const categoryColor = document.getElementById('category-color').value;
+                const categoryType = document.getElementById('category-type').value; // [신규] 타입 값 가져오기
 
                 if (categoryIndex) { // 수정
                     siteData[categoryIndex].category = categoryName;
                     siteData[categoryIndex].color = categoryColor;
+                    siteData[categoryIndex].type = categoryType; // [신규] 타입 업데이트
                 } else { // 추가
-                    siteData.push({ category: categoryName, sites: [], color: categoryColor, clicks: 0 });
+                    siteData.push({ category: categoryName, type: categoryType, sites: [], color: categoryColor });
                 }
                 saveData();
                 hideModals();
@@ -1784,6 +2188,37 @@
             titleForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 dashboardTitle = document.getElementById('dashboard-title-input').value;
+                saveData();
+                hideModals();
+            });
+
+            // [신규] 이벤트 폼 제출
+            document.getElementById('event-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const categoryIndex = document.getElementById('event-category-index').value;
+                const eventIndex = document.getElementById('event-index').value;
+                const eventType = document.getElementById('event-type').value;
+
+                const eventData = {
+                    type: eventType,
+                    name: document.getElementById('event-name').value,
+                    icon: document.getElementById('event-icon').value,
+                    targetDate: eventType === 'dday' 
+                        ? document.getElementById('event-date').value 
+                        : document.getElementById('event-datetime').value,
+                    recurrence: document.getElementById('event-recurrence').value, // [신규] 반복 정보 추가
+                };
+
+                if (!eventData.targetDate) {
+                    showToast('날짜 또는 시간을 입력해주세요.', true);
+                    return;
+                }
+
+                if (eventIndex) { // 수정
+                    siteData[categoryIndex].sites[eventIndex] = eventData;
+                } else { // 추가
+                    siteData[categoryIndex].sites.push(eventData);
+                }
                 saveData();
                 hideModals();
             });
@@ -1816,6 +2251,7 @@
             loadFont();             // 0. [폰트 변경 추가] 폰트 로드 (영구 저장된 것만)
             loadData();             // 1. 데이터 로드 (localStorage 또는 기본값)
             renderCards();          // 2. 카드 렌더링 (여기서 카테고리 내비게이션도 렌더링됨)
+            renderSummaryBoxes();   // [신규] 요약 박스 렌더링
             setupThemeToggle();     // 3. 테마 토글 설정
             setupEventListeners();  // 4. [추가] 모든 설정 관련 이벤트 리스너 활성화
             setupSearchEngine();    // 5. [추가] 검색 엔진 설정
