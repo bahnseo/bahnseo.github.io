@@ -299,6 +299,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v13"></path>
                         </svg>
                     </button>
+                    <div id="gdrive-header-timestamps" class="flex flex-col text-xs text-gray-500 dark:text-gray-400 ml-2" style="display: none;">
+                        <span id="gdrive-export-timestamp-header">내보내기: 없음</span>
+                        <span id="gdrive-import-timestamp-header">가져오기: 없음</span>
+                    </div>
                 </div>
             			</div>        </header>
             
@@ -1951,13 +1955,10 @@
 
         function trySilentLogin() {
             triedSilentLogin = true;
-            const userLoggedOut = localStorage.getItem('gdrive_user_logged_out') === 'true';
-            if (userLoggedOut) {
-                updateSigninStatus(false);
-                return;
-            }
-            
-            if (CLIENT_ID && CLIENT_ID !== 'YOUR_CLIENT_ID.apps.googleusercontent.com') {
+            // [수정] '로그인 했었음' 플래그가 있을 때만 자동 로그인 시도
+            const userWasLoggedIn = localStorage.getItem('gdrive_user_logged_in') === 'true';
+
+            if (userWasLoggedIn && CLIENT_ID && CLIENT_ID !== 'YOUR_CLIENT_ID.apps.googleusercontent.com') {
                 isSilentAttempt = true;
                 tokenClient.requestAccessToken({prompt: 'none'});
             } else {
@@ -1969,13 +1970,17 @@
             if (tokenResponse && tokenResponse.access_token) {
                 gapiToken = tokenResponse;
                 gapi.client.setToken(gapiToken);
-                localStorage.removeItem('gdrive_user_logged_out'); // 로그인 성공 시 로그아웃 플래그 제거
+                localStorage.setItem('gdrive_user_logged_in', 'true'); // [수정] 로그인 상태 플래그 설정
                 updateSigninStatus(true);
                 if (!isSilentAttempt) {
                     showToast("Google 계정에 로그인되었습니다.");
                 }
             } else {
                 updateSigninStatus(false);
+                // [수정] 자동 로그인 실패 시에는 플래그를 제거하여 다음 번 수동 로그인을 유도
+                if (isSilentAttempt) {
+                    localStorage.removeItem('gdrive_user_logged_in');
+                }
                 if (!isSilentAttempt) {
                     showToast("로그인에 실패했습니다. 팝업이 차단되었거나, 브라우저에 Google 계정 로그인이 필요할 수 있습니다.", true);
                 }
@@ -2000,8 +2005,17 @@
         function updateTimestamps() {
             const lastExport = localStorage.getItem('gdrive_last_export_timestamp');
             const lastImport = localStorage.getItem('gdrive_last_import_timestamp');
-            document.getElementById('gdrive-export-timestamp').textContent = `마지막 내보내기: ${formatSyncTimestamp(lastExport)}`;
-            document.getElementById('gdrive-import-timestamp').textContent = `마지막 가져오기: ${formatSyncTimestamp(lastImport)}`;
+            
+            const formattedExport = formatSyncTimestamp(lastExport);
+            const formattedImport = formatSyncTimestamp(lastImport);
+
+            // 설정 패널의 타임스탬프 업데이트
+            document.getElementById('gdrive-export-timestamp').textContent = `마지막 내보내기: ${formattedExport}`;
+            document.getElementById('gdrive-import-timestamp').textContent = `마지막 가져오기: ${formattedImport}`;
+
+            // 헤더의 타임스탬프 업데이트
+            document.getElementById('gdrive-export-timestamp-header').textContent = `내보내기: ${formattedExport}`;
+            document.getElementById('gdrive-import-timestamp-header').textContent = `가져오기: ${formattedImport}`;
         }
 
         function updateSigninStatus(isSignedIn) {
@@ -2010,6 +2024,7 @@
             const gdriveActionsContainer = document.getElementById('gdrive-actions-container');
             const gdriveHeaderActions = document.getElementById('gdrive-header-actions');
             const gdriveTimestampContainer = document.getElementById('gdrive-timestamp-container');
+            const gdriveHeaderTimestamps = document.getElementById('gdrive-header-timestamps'); // [신규] 헤더 타임스탬프 컨테이너
             const statusEl = document.getElementById('gdrive-status');
 
             if (isSignedIn) {
@@ -2018,6 +2033,7 @@
                 gdriveActionsContainer.style.display = 'grid';
                 gdriveHeaderActions.style.display = 'flex';
                 gdriveTimestampContainer.style.display = 'block';
+                gdriveHeaderTimestamps.style.display = 'flex'; // [신규] 헤더 타임스탬프 표시
                 statusEl.textContent = `Google 계정 로그인됨`;
                 updateTimestamps(); // 로그인 시 타임스탬프 업데이트
             } else {
@@ -2026,6 +2042,7 @@
                 gdriveActionsContainer.style.display = 'none';
                 gdriveHeaderActions.style.display = 'none';
                 gdriveTimestampContainer.style.display = 'none';
+                gdriveHeaderTimestamps.style.display = 'none'; // [신규] 헤더 타임스탬프 숨기기
                 statusEl.textContent = '로그인되지 않음';
             }
         }
@@ -2059,7 +2076,7 @@
                 google.accounts.oauth2.revoke(gapiToken.access_token, () => {
                     gapiToken = null;
                     gapi.client.setToken(null);
-                    localStorage.setItem('gdrive_user_logged_out', 'true'); // 로그아웃 상태 기록
+                    localStorage.removeItem('gdrive_user_logged_in'); // [수정] 로그인 상태 플래그 제거
                     updateSigninStatus(false);
                     showToast("로그아웃되었습니다.");
                 });
@@ -2599,4 +2616,3 @@
     </script>
 </body>
 </html>
-
