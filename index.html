@@ -2730,6 +2730,7 @@
             updateGdriveButtonState(); // [추가] GDrive 버튼 초기 상태 설정
             if (localStorage.getItem('gdrive_user_logged_in') === 'true') {
                 updateSigninStatus('reauth_needed', 'Google 계정 확인 중...'); // Assume re-auth needed until silent login succeeds
+                trySilentLogin(); // [추가] 자동 로그인 시도
             } else {
                 updateSigninStatus('logged_out');
             }
