@@ -38,6 +38,7 @@
 
     <!-- [신규] Google API Client Library -->
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 
     
     <style>
@@ -1891,14 +1892,14 @@
             }
         }
 
-        // --- [신규] Google Drive 연동 기능 ---
+        // --- [신규] Google Drive 연동 기능 (GIS 라이브러리 사용) ---
 
         // [개발자 설정 필요]
         // 1. Google Cloud Console(https://console.cloud.google.com/)에서 프로젝트를 생성합니다.
         // 2. 'API 및 서비스' > '라이브러리'에서 'Google Drive API'를 사용 설정합니다.
         // 3. 'API 및 서비스' > '사용자 인증 정보'에서 'OAuth 2.0 클라이언트 ID'를 생성합니다.
         //    - 애플리케이션 유형: 웹 애플리케이션
-        //    - 승인된 자바스크립트 원본: 현재 대시보드를 호스팅하는 URL (예: http://localhost:8000, https://my-dashboard.com)
+        //    - 승인된 자바스크립트 원본: 현재 대시보드를 호스팅하는 URL (예: https://username.github.io)
         // 4. 'API 및 서비스' > '사용자 인증 정보'에서 'API 키'를 생성합니다.
         // 5. 아래 YOUR_API_KEY와 YOUR_CLIENT_ID를 자신의 값으로 변경합니다.
         const API_KEY = 'AIzaSyAO8OoKfWN-fpogK_KV6BmwO1HBKEwhkjo';
@@ -1908,34 +1909,42 @@
         const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
         const BACKUP_FILE_NAME = 'my-dashboard-data.json';
 
+        let tokenClient;
         let gapiInited = false;
-        let authInited = false;
+        let gisInited = false;
+        let gapiToken = null;
 
         function gapiLoaded() {
-            gapi.load('client:auth2', initClient);
+            gapi.load('client', initializeGapiClient);
         }
 
-        function initClient() {
-            gapi.client.init({
+        async function initializeGapiClient() {
+            await gapi.client.init({
                 apiKey: API_KEY,
-                clientId: CLIENT_ID,
                 discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES
-            }).then(() => {
-                gapiInited = true;
-                const authInstance = gapi.auth2.getAuthInstance();
-                if (authInstance) {
-                    authInstance.isSignedIn.listen(updateSigninStatus);
-                    updateSigninStatus(authInstance.isSignedIn.get());
-                    authInited = true;
-                } else {
-                     // Handle case where auth instance is not ready
-                    console.error("Google Auth2 instance not found.");
-                    showToast("Google 인증 라이브러리를 불러오지 못했습니다.", true);
-                }
-            }, (error) => {
-                handleApiError(error, "Google API 클라이언트 초기화 실패. API 키와 클라이언트 ID를 확인하세요.");
             });
+            gapiInited = true;
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: tokenCallback,
+            });
+            gisInited = true;
+        }
+
+        function tokenCallback(tokenResponse) {
+            if (tokenResponse && tokenResponse.access_token) {
+                gapiToken = tokenResponse;
+                gapi.client.setToken(gapiToken);
+                updateSigninStatus(true);
+                showToast("Google 계정에 로그인되었습니다.");
+            } else {
+                console.error("Access token not found in response.");
+                showToast("로그인에 실패했습니다.", true);
+            }
         }
 
         function updateSigninStatus(isSignedIn) {
@@ -1948,9 +1957,7 @@
                 authorizeBtn.style.display = 'none';
                 signoutContainer.style.display = 'flex';
                 gdriveActionsContainer.style.display = 'grid';
-                const user = gapi.auth2.getAuthInstance().currentUser.get();
-                const profile = user.getBasicProfile();
-                statusEl.textContent = `${profile.getName()} 님으로 로그인됨`;
+                statusEl.textContent = `Google 계정 로그인됨`;
             } else {
                 authorizeBtn.style.display = 'block';
                 signoutContainer.style.display = 'none';
@@ -1962,8 +1969,8 @@
         function handleApiError(error, customMessage) {
             console.error(customMessage, error);
             let message = customMessage;
-            if (error.details) {
-                message = `${customMessage}: ${error.details}`;
+            if (error.result && error.result.error) {
+                message = `${customMessage}: ${error.result.error.message}`;
             } else if (error.message) {
                 message = `${customMessage}: ${error.message}`;
             }
@@ -1975,16 +1982,21 @@
                 showToast("Google Drive API 키가 설정되지 않았습니다. 코드 내 안내를 확인하세요.", true);
                 return;
             }
-            if (gapiInited && authInited) {
-                gapi.auth2.getAuthInstance().signIn();
+            if (gapiInited && gisInited) {
+                tokenClient.requestAccessToken();
             } else {
                 showToast("Google API가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.", true);
             }
         }
 
         function handleSignoutClick() {
-            if (authInited) {
-                gapi.auth2.getAuthInstance().signOut();
+            if (gapiToken) {
+                google.accounts.oauth2.revoke(gapiToken.access_token, () => {
+                    gapiToken = null;
+                    gapi.client.setToken(null);
+                    updateSigninStatus(false);
+                    showToast("로그아웃되었습니다.");
+                });
             }
         }
 
@@ -1997,9 +2009,8 @@
                 });
                 const files = response.result.files;
                 if (files && files.length > 0) {
-                    return files[0].id; // 파일 ID 반환
+                    return files[0].id;
                 } else {
-                    // 파일이 없으면 생성
                     const fileMetadata = {
                         name: BACKUP_FILE_NAME,
                         parents: ['appDataFolder']
@@ -2017,6 +2028,11 @@
         }
 
         async function exportToGoogleDrive() {
+            if (!gapiToken) {
+                showToast("Google 계정에 먼저 로그인해주세요.", true);
+                handleAuthClick();
+                return;
+            }
             showToast("Google Drive에 내보내는 중...", false);
             const fileId = await findOrCreateFile();
             if (!fileId) return;
@@ -2063,8 +2079,13 @@
         }
 
         async function importFromGoogleDrive() {
+            if (!gapiToken) {
+                showToast("Google 계정에 먼저 로그인해주세요.", true);
+                handleAuthClick();
+                return;
+            }
             showToast("Google Drive에서 가져오는 중...", false);
-            const fileId = await findOrCreateFile(); // 파일을 찾거나, 없으면 생성 후 ID를 가져옴 (가져올 게 없을 수도 있음)
+            const fileId = await findOrCreateFile();
             if (!fileId) return;
 
             try {
@@ -2073,7 +2094,6 @@
                     alt: 'media'
                 });
 
-                // 파일 내용이 비어있는 경우 (새로 생성된 파일)
                 if (Object.keys(response.result).length === 0) {
                     showToast("Google Drive에 저장된 데이터가 없습니다. 먼저 내보내기를 실행하세요.", true);
                     return;
