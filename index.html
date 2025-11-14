@@ -1306,14 +1306,12 @@
             const categoriesToRender = [];
             const popularSites = getPopularSites(); // 인기 사이트 목록 가져오기
 
-            // [신규] 인기 사이트 카테고리 추가 (클릭 수가 있는 경우에만)
-            if (popularSites.length > 0) {
-                categoriesToRender.push({
-                    category: "자주 방문하는 사이트",
-                    sites: popularSites,
-                    isPopularCategory: true // 이 카테고리가 특별하다는 플래그
-                });
-            }
+            // [수정] '자주 방문하는 사이트'가 항상 표시되도록 변경
+            categoriesToRender.push({
+                category: "자주 방문하는 사이트",
+                sites: popularSites,
+                isPopularCategory: true // 이 카테고리가 특별하다는 플래그
+            });
 
             // 실제 siteData의 카테고리들을 추가
             categoriesToRender.push(...siteData);
@@ -2447,61 +2445,52 @@
                 const editSiteBtn = e.target.closest('.edit-site-btn');
                 const deleteSiteBtn = e.target.closest('.delete-site-btn');
                 const clearClicksBtn = e.target.closest('#clear-clicks-btn');
-
-                // [버그 수정] '자주 방문하는 사이트' 카테고리가 표시될 때 인덱스 보정
-                const popularCategoryExists = document.getElementById('category-popular') !== null;
                 
-                function getRealCategoryIndex(renderIndex) {
-                    const index = parseInt(renderIndex, 10);
-                    // 인기 카테고리가 존재하면, 렌더링 인덱스에서 1을 빼서 실제 siteData 인덱스를 구함
-                    return popularCategoryExists ? index - 1 : index;
-                }
-
                 if (addSiteBtn) {
                     e.preventDefault();
-                    const realIndex = getRealCategoryIndex(addSiteBtn.dataset.categoryIndex);
+                    const categoryIndex = parseInt(addSiteBtn.dataset.categoryIndex, 10);
                     // [신규] 카테고리 타입에 따라 다른 모달 호출
-                    if (siteData[realIndex] && siteData[realIndex].type === 'events') {
-                        showEventModal(realIndex);
+                    if (siteData[categoryIndex] && siteData[categoryIndex].type === 'events') {
+                        showEventModal(categoryIndex);
                     } else {
-                        showSiteModal(realIndex);
+                        showSiteModal(categoryIndex);
                     }
                 } 
                 else if (editCategoryBtn) {
                     e.preventDefault();
-                    const realIndex = getRealCategoryIndex(editCategoryBtn.dataset.categoryIndex);
-                    showCategoryModal(realIndex);
+                    const categoryIndex = parseInt(editCategoryBtn.dataset.categoryIndex, 10);
+                    showCategoryModal(categoryIndex);
                 } 
                 else if (deleteCategoryBtn) {
                     e.preventDefault();
-                    const realIndex = getRealCategoryIndex(deleteCategoryBtn.dataset.categoryIndex);
+                    const categoryIndex = parseInt(deleteCategoryBtn.dataset.categoryIndex, 10);
                     showConfirmModal(
-                        `'${siteData[realIndex].category}' 카테고리를 정말 삭제하시겠습니까?<br><br><span class="text-sm text-red-500">포함된 모든 사이트가 함께 삭제됩니다.</span>`,
+                        `'${siteData[categoryIndex].category}' 카테고리를 정말 삭제하시겠습니까?<br><br><span class="text-sm text-red-500">포함된 모든 사이트가 함께 삭제됩니다.</span>`,
                         () => {
-                            siteData.splice(realIndex, 1);
+                            siteData.splice(categoryIndex, 1);
                             saveData();
                         }
                     );
                 } 
                 else if (editSiteBtn) {
                     e.preventDefault();
-                    const realIndex = getRealCategoryIndex(editSiteBtn.dataset.categoryIndex);
-                    const siteIndex = editSiteBtn.dataset.siteIndex;
+                    const categoryIndex = parseInt(editSiteBtn.dataset.categoryIndex, 10);
+                    const siteIndex = parseInt(editSiteBtn.dataset.siteIndex, 10);
                     // [신규] 카테고리 타입에 따라 다른 모달 호출
-                    if (siteData[realIndex] && siteData[realIndex].type === 'events') {
-                        showEventModal(realIndex, siteIndex);
+                    if (siteData[categoryIndex] && siteData[categoryIndex].type === 'events') {
+                        showEventModal(categoryIndex, siteIndex);
                     } else {
-                        showSiteModal(realIndex, siteIndex);
+                        showSiteModal(categoryIndex, siteIndex);
                     }
                 } 
                 else if (deleteSiteBtn) {
                     e.preventDefault();
-                    const realCatIndex = getRealCategoryIndex(deleteSiteBtn.dataset.categoryIndex);
-                    const siteIndex = deleteSiteBtn.dataset.siteIndex;
+                    const categoryIndex = parseInt(deleteSiteBtn.dataset.categoryIndex, 10);
+                    const siteIndex = parseInt(deleteSiteBtn.dataset.siteIndex, 10);
                     showConfirmModal(
-                        `'${siteData[realCatIndex].sites[siteIndex].name}' 사이트를 정말 삭제하시겠습니까?`,
+                        `'${siteData[categoryIndex].sites[siteIndex].name}' 사이트를 정말 삭제하시겠습니까?`,
                         () => {
-                            siteData[realCatIndex].sites.splice(siteIndex, 1);
+                            siteData[categoryIndex].sites.splice(siteIndex, 1);
                             saveData();
                         }
                     );
