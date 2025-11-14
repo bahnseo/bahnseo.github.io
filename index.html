@@ -1764,18 +1764,6 @@
                     hideConfirmModal();
                  }
             });
-
-            // [버그 수정] 전역 참조 변수 업데이트
-            document.getElementById('cancel-confirm-btn').addEventListener('click', hideConfirmModal);
-            document.getElementById('confirm-delete-btn').addEventListener('click', () => {
-                 hideConfirmModal();
-                 onConfirm();
-            });
-             document.getElementById('confirm-modal').addEventListener('click', (e) => {
-                 if (e.target === document.getElementById('confirm-modal')) {
-                    hideConfirmModal();
-                 }
-            });
         }
 
         function hideConfirmModal() {
