@@ -2107,16 +2107,15 @@
                 signoutContainer.style.display = 'flex';
                 gdriveActionsContainer.style.display = 'grid';
                 statusEl.textContent = statusMessage || `Google 계정 로그인됨`;
-            } else if (status === 'logged_out') {
+            } else { // 'logged_out' and 'reauth_needed' will be handled here
                 authorizeBtn.style.display = 'block';
                 signoutContainer.style.display = 'none';
                 gdriveActionsContainer.style.display = 'none';
-                statusEl.textContent = statusMessage || '로그인되지 않음';
-            } else if (status === 'reauth_needed') {
-                authorizeBtn.style.display = 'block'; // Show authorize button for re-authentication
-                signoutContainer.style.display = 'flex'; // Keep signout visible
-                gdriveActionsContainer.style.display = 'grid'; // Keep actions visible (but they will fail without token)
-                statusEl.textContent = statusMessage || 'Google 계정 재인증 필요';
+                if (status === 'reauth_needed') {
+                    statusEl.textContent = statusMessage || 'Google 계정 재인증 필요';
+                } else { // 'logged_out'
+                    statusEl.textContent = statusMessage || '로그인되지 않음';
+                }
             }
         }
         
