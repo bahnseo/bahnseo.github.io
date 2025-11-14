@@ -1979,23 +1979,59 @@
         let gapiToken = null;
         let isSilentAttempt = false; // [신규] 자동 로그인 시도 플래그
 
+        /** [신규] Google Drive 로그인 버튼 상태 업데이트 */
+        function updateGdriveButtonState() {
+            const authorizeBtn = document.getElementById('gdrive-authorize-btn');
+            if (!authorizeBtn) return;
+
+            // API 키가 없는 경우, 버튼을 영구적으로 비활성화하고 메시지 표시
+            if (API_KEY === '' || CLIENT_ID === '') {
+                authorizeBtn.disabled = true;
+                authorizeBtn.textContent = 'API 키 설정 필요';
+                authorizeBtn.title = 'Google Drive API 키 또는 Client ID가 설정되지 않았습니다.';
+                authorizeBtn.classList.add('cursor-not-allowed', 'bg-red-400', 'dark:bg-red-800');
+                authorizeBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                return;
+            }
+
+            if (gapiInited && gisInited) {
+                authorizeBtn.disabled = false;
+                authorizeBtn.textContent = 'Google 계정으로 로그인';
+                authorizeBtn.title = 'Google 계정으로 로그인하여 데이터를 동기화합니다.';
+                authorizeBtn.classList.remove('cursor-not-allowed', 'bg-gray-400');
+                authorizeBtn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+            } else {
+                authorizeBtn.disabled = true;
+                authorizeBtn.textContent = 'Google API 로딩 중...';
+                authorizeBtn.title = 'Google API가 로드될 때까지 잠시 기다려주세요.';
+                authorizeBtn.classList.add('cursor-not-allowed', 'bg-gray-400');
+                authorizeBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+            }
+        }
+
         function gapiLoaded() {
             gapi.load('client', initializeGapiClient);
         }
 
         async function initializeGapiClient() {
+            if (API_KEY === '') {
+                console.warn("API 키가 설정되지 않아 GAPI Client 초기화를 건너뜁니다.");
+                updateGdriveButtonState(); // [추가] 버튼 상태 업데이트
+                return;
+            }
             try {
                 await gapi.client.init({
                     apiKey: API_KEY,
                     discoveryDocs: DISCOVERY_DOCS,
                 });
                 gapiInited = true;
+                updateGdriveButtonState(); // [추가] 버튼 상태 업데이트
             } catch (error) {
-                 console.error("GAPI Client 초기화 실패:", error);
-                 // API 키가 잘못되었을 때 흔히 발생
                  if (error.details) {
-                     showToast(`GAPI 초기화 실패: ${error.details}`, true);
+                     console.error("GAPI Client 초기화 실패:", error.details);
+                     showToast(`GAPI Client 초기화에 실패했습니다: ${error.details}`, true);
                  } else {
+                     console.error("GAPI Client 초기화 실패:", error);
                      showToast("GAPI Client 초기화에 실패했습니다. API 키를 확인하세요.", true);
                  }
             }
@@ -2004,6 +2040,7 @@
         function gisLoaded() {
             if (!CLIENT_ID) {
                  console.error("Google Client ID가 설정되지 않았습니다.");
+                 updateGdriveButtonState(); // [추가] 버튼 상태 업데이트
                  return;
             }
             try {
@@ -2013,6 +2050,7 @@
                     callback: tokenCallback, // 응답을 처리할 콜백 함수
                 });
                 gisInited = true;
+                updateGdriveButtonState(); // [추가] 버튼 상태 업데이트
             } catch (error) {
                 console.error("GSI Client 초기화 실패:", error);
                 showToast("GSI Client 초기화에 실패했습니다. Client ID를 확인하세요.", true);
@@ -2689,6 +2727,7 @@
             loadData();             // 1. 데이터 로드 (localStorage 또는 기본값)
 
             // Initial status check for Google Drive
+            updateGdriveButtonState(); // [추가] GDrive 버튼 초기 상태 설정
             if (localStorage.getItem('gdrive_user_logged_in') === 'true') {
                 updateSigninStatus('reauth_needed', 'Google 계정 확인 중...'); // Assume re-auth needed until silent login succeeds
             } else {
