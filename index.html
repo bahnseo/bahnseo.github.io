@@ -287,22 +287,9 @@
                     </button>
                 </div>
 
-                <!-- [신규] Google Drive 동기화 버튼 (헤더) -->
-                <div id="gdrive-header-actions" class="hidden md:flex items-center gap-2" style="display: none;">
-                    <button id="import-gdrive-btn-header" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Google Drive에서 가져오기">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-6l-4 4m0 0l-4-4m4 4V3"></path>
-                        </svg>
-                    </button>
-                    <button id="export-gdrive-btn-header" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Google Drive로 내보내기">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v13"></path>
-                        </svg>
-                    </button>
-                    <div id="gdrive-header-timestamps" class="flex flex-col text-xs text-gray-500 dark:text-gray-400 ml-2" style="display: none;">
-                        <span id="gdrive-export-timestamp-header">내보내기: 없음</span>
-                        <span id="gdrive-import-timestamp-header">가져오기: 없음</span>
-                    </div>
+                <!-- [수정] 설정/테마 버튼은 아래 플로팅 컨테이너로 이동하고, 이 자리에는 공간만 남깁니다. -->
+                <div class="hidden md:flex items-center gap-2 sm:gap-4">
+                    <!-- Placeholder for the space formerly occupied by settings/theme buttons -->
                 </div>
             			</div>        </header>
             
@@ -421,10 +408,6 @@
                         Drive로 내보내기
                     </button>
                 </div>
-                <div id="gdrive-timestamp-container" class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center" style="display: none;">
-                    <p id="gdrive-export-timestamp">마지막 내보내기: 없음</p>
-                    <p id="gdrive-import-timestamp">마지막 가져오기: 없음</p>
-                </div>
                 <p class="text-xs text-gray-500 mt-2">Google Drive 연동 기능은 사용자가 직접 Google Cloud에서 API 키를 발급받아야 정상적으로 동작합니다.</p>
             </div>
         </div>
@@ -443,7 +426,7 @@
         <!-- [이동된] 설정 모드 토글 버튼 -->
         <button id="settings-toggle-btn" class="p-1.5 rounded-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white shadow-xl transition-colors">
             <svg id="settings-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826 3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -831,16 +814,18 @@
                 siteData = [
                     {
                         category: "주요 포털",
+                        type: "links", // [신규] 타입 추가
                         sites: [
-                            { name: "Naver", url: "https://www.naver.com", icon: "🟢", description: "국내 1위 포털 사이트" },
-                            { name: "Google", url: "https://www.google.com", icon: "🔵", description: "글로벌 검색 엔진" },
+                            { name: "Naver", url: "https://www.naver.com", icon: "🟢", description: "국내 1위 포털 사이트", clicks: 0 },
+                            { name: "Google", url: "https://www.google.com", icon: "🔵", description: "글로벌 검색 엔진", clicks: 0 },
                         ]
                     },
                     {
                         category: "개발 도구",
+                        type: "links", // [신규] 타입 추가
                         sites: [
-                            { name: "GitHub", url: "https://github.com", icon: "🐙", description: "코드 호스팅 플랫폼" },
-                            { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "📚", description: "개발자 Q&A 커뮤니티" },
+                            { name: "GitHub", url: "https://github.com", icon: "🐙", description: "코드 호스팅 플랫폼", clicks: 0 },
+                            { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "📚", description: "개발자 Q&A 커뮤니티", clicks: 0 },
                         ]
                     }
                 ];
@@ -879,20 +864,19 @@
                     category.type = 'links'; // 기존 데이터는 'links' 타입으로 지정
                     needsMigration = true;
                 }
-            });
-
-            // [신규] 모든 사이트 객체에 'clicks' 속성이 있는지 확인하고, 없으면 0으로 초기화
-            siteData.forEach(category => {
+                
+                // [신규] 모든 사이트 객체에 'clicks' 속성이 있는지 확인하고, 없으면 0으로 초기화
                 // 'links' 타입 카테고리에만 'clicks' 속성 초기화 적용
-                if (category.type === 'links') {
-                    if (!category.sites) category.sites = []; // [버그 수정] sites가 없는 경우 초기화
+                if (category.type === 'links' && category.sites) {
                     category.sites.forEach(site => {
                         if (typeof site.clicks === 'undefined') {
                             site.clicks = 0;
                         }
                     });
-                } else if (category.type === 'events') {
-                     if (!category.sites) category.sites = []; // [버그 수정] sites가 없는 경우 초기화
+                } else if (category.type === 'events' && !category.sites) {
+                     // [신규] 'events' 타입인데 sites 배열이 없으면 초기화
+                    category.sites = [];
+                    needsMigration = true;
                 }
             });
             
@@ -1090,7 +1074,6 @@
                 document.getElementById('category-nav-wrapper').style.display = 'none';
                 return;
             }
-            // [버그 수정] style.display를 'block'이나 'inline' 대신 'flex'로 설정해야 합니다 (Tailwind 'flex' 클래스 기준).
             document.getElementById('category-nav-wrapper').style.display = 'flex'; // 다시 보이게
             
             siteData.forEach((category, index) => {
@@ -1131,6 +1114,15 @@
             document.querySelectorAll('.category-nav-item').forEach(item => {
                 if (item.dataset.categoryId === activeId) {
                     item.classList.add('active');
+                    /* [제거] 내비게이션 바가 고정되어 있지 않으므로 탭을 스크롤하는 로직 제거
+                    // 활성화된 탭이 중앙에 오도록 스크롤합니다.
+                    const navRect = categoryNav.getBoundingClientRect();
+                    // ... (관련 로직 모두 제거) ...
+                    categoryNav.scrollTo({
+                        left: scrollLeft,
+                        behavior: 'smooth'
+                    });
+                    */
                 } else {
                     item.classList.remove('active');
                 }
@@ -1140,7 +1132,8 @@
         // --- [신규] 모든 클릭 수 초기화 함수 ---
         function clearAllClickCounts() {
             siteData.forEach(category => {
-                if (category.type === 'links' && category.sites) { // [버그 수정] events 타입 제외
+                // [수정] links 타입 카테고리의 사이트만 초기화
+                if (category.type === 'links' && category.sites) {
                     category.sites.forEach(site => {
                         site.clicks = 0;
                     });
@@ -1153,13 +1146,14 @@
         function getPopularSites(limit = 5) {
             const allSites = [];
             siteData.forEach((category, categoryIndex) => {
-                if (category.type === 'links' && category.sites) { // [버그 수정] events 타입 제외
+                 // [수정] links 타입 카테고리의 사이트만 집계
+                if (category.type === 'links' && category.sites) {
                     category.sites.forEach((site, siteIndex) => {
                         // 원본 카테고리 및 사이트 인덱스를 포함한 사이트 객체 복사본 생성
                         allSites.push({ 
                             ...site, 
-                            originalCategoryIndex: categoryIndex, // siteData.indexOf(category) 대신 인덱스 사용
-                            originalSiteIndex: siteIndex // category.sites.indexOf(site) 대신 인덱스 사용
+                            originalCategoryIndex: categoryIndex, 
+                            originalSiteIndex: siteIndex 
                         });
                     });
                 }
@@ -1181,7 +1175,7 @@
 
             let allEvents = [];
             siteData.forEach(cat => {
-                if (cat.type === 'events' && cat.sites) { // [버그 수정] sites가 있는지 확인
+                if (cat.type === 'events' && cat.sites) { // [수정] cat.sites가 있는지 확인
                     allEvents.push(...cat.sites);
                 }
             });
@@ -1190,7 +1184,7 @@
             const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
             const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-            // 1. D-Day 처리 (기존과 동일)
+            // 1. D-Day 처리
             const ddays = allEvents
                 .filter(e => e.type === 'dday' && e.targetDate)
                 .map(e => {
@@ -1218,10 +1212,13 @@
                 .flatMap(event => { // map -> flatMap으로 변경하여 여러 개의 발생 시간을 반환하도록 함
                     const occurrences = [];
                     const startDate = new Date(event.targetDate);
-                    // [버그 수정] startDate가 유효하지 않으면 빈 배열 반환
+                    
+                    // [버그 수정] 유효하지 않은 날짜(Invalid Date)일 경우 건너뛰기
                     if (isNaN(startDate.getTime())) {
+                        console.warn("Invalid event date found:", event);
                         return [];
                     }
+
                     const targetHours = startDate.getHours();
                     const targetMinutes = startDate.getMinutes();
 
@@ -1315,9 +1312,8 @@
             // 실제 siteData의 카테고리들을 추가
             categoriesToRender.push(...siteData);
 
-            // [신규] 카테고리 내비게이션 렌더링 (categoriesToRender 기반)
-            renderCategoryNav(categoriesToRender); // [버그 수정] renderCategoryNav는 siteData를 기반으로 해야 함
-            renderCategoryNav(); // siteData를 사용하도록 수정
+            // [신규] 카테고리 내비게이션 렌더링 (siteData 기준, 인기 사이트 제외)
+            renderCategoryNav();
 
             if (categoriesToRender.length === 0 && editMode) {
                 mainContent.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">'새 카테고리 추가' 버튼을 눌러 시작하세요.</p>`;
@@ -1326,19 +1322,23 @@
             }
 
             categoriesToRender.forEach((category, currentRenderIndex) => { // categoryIndex 대신 currentRenderIndex 사용
-                // [버그 수정] category-popular가 아닌 경우, 실제 siteData 인덱스를 찾아 ID 생성
-                let categoryId = '';
-                if (category.isPopularCategory) {
-                    categoryId = 'category-popular';
-                } else {
-                    // [버그 수정] categoriesToRender에는 popular가 포함될 수 있으므로, siteData에서 실제 인덱스 찾기
-                    const actualIndex = siteData.findIndex(c => c.category === category.category && c.type === category.type);
-                    categoryId = `category-${actualIndex}`;
+                
+                // [수정] '자주 방문'이 아닐 경우, 실제 siteData 인덱스를 찾음
+                let realCategoryIndex = -1;
+                if (!category.isPopularCategory) {
+                    // siteData에서 현재 카테고리와 동일한 객체를 찾아 인덱스를 구함
+                    // (참조 동일성 비교)
+                    realCategoryIndex = siteData.findIndex(c => c === category);
                 }
+
+                const categoryId = category.isPopularCategory ? 'category-popular' : `category-${realCategoryIndex}`;
+                
+                // [버그 수정] realCategoryIndex가 -1 (즉, 인기 카테고리)일 때 category-popular를 사용하도록
+                const sectionId = category.isPopularCategory ? 'category-popular' : `category-${realCategoryIndex}`;
 
                 // 1. 카테고리 섹션
                 const section = document.createElement('section');
-                section.id = categoryId; 
+                section.id = sectionId; 
                 section.className = 'mb-12 pt-4';
 
                 // 2. 카테고리 제목 영역
@@ -1355,9 +1355,6 @@
                     categoryTitleStyle = `style="color: ${category.color}"`; // 텍스트 색상 스타일 추가
                 }
                 
-                // [버그 수정] data-category-index를 렌더링 인덱스(currentRenderIndex)가 아닌, 실제 siteData 인덱스로 설정해야 함
-                const actualIndex = category.isPopularCategory ? -1 : siteData.findIndex(c => c.category === category.category && c.type === category.type);
-
                 titleWrapper.innerHTML = `
                     <h2 class="text-2xl font-semibold" ${categoryTitleStyle}>${category.category}</h2>
                     ${category.isPopularCategory ? `
@@ -1368,13 +1365,13 @@
                     </button>
                     ` : `
                     <div class="edit-controls-inline space-x-2">
-                        <button class="add-site-btn p-1 text-green-500 hover:text-green-700" data-category-index="${actualIndex}" title="이 카테고리에 사이트 추가">
+                        <button class="add-site-btn p-1 text-green-500 hover:text-green-700" data-category-index="${realCategoryIndex}" title="이 카테고리에 아이템 추가">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
-                        <button class="edit-category-btn p-1 text-blue-500 hover:text-blue-700" data-category-index="${actualIndex}" title="카테고리 이름 수정">
+                        <button class="edit-category-btn p-1 text-blue-500 hover:text-blue-700" data-category-index="${realCategoryIndex}" title="카테고리 이름 수정">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
                         </button>
-                        <button class="delete-category-btn p-1 text-red-500 hover:text-red-700" data-category-index="${actualIndex}" title="카테고리 삭제">
+                        <button class="delete-category-btn p-1 text-red-500 hover:text-red-700" data-category-index="${realCategoryIndex}" title="카테고리 삭제">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
                         </button>
                     </div>
@@ -1387,23 +1384,27 @@
                 grid.className = 'card-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6';
                 // 인기 카테고리는 드래그 앤 드롭 대상 아님
                 if (!category.isPopularCategory) {
-                    grid.dataset.categoryIndex = actualIndex; // [버그 수정] 실제 인덱스 사용
+                    grid.dataset.categoryIndex = realCategoryIndex; // [수정] 실제 인덱스 사용
                 }
 
-                if (category.sites.length === 0 && editMode && !category.isPopularCategory) {
-                     grid.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">'사이트 추가' 버튼을 눌러 이 카테고리에 첫 사이트를 추가하세요.</p>`;
-                } else if (category.sites.length === 0 && !editMode && category.isPopularCategory) {
+                // [수정] sites가 없을 경우를 대비 (특히 'events' 타입)
+                const sites = category.sites || [];
+
+                if (sites.length === 0 && editMode && !category.isPopularCategory) {
+                     grid.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">'아이템 추가' 버튼을 눌러 첫 아이템을 추가하세요.</p>`;
+                } else if (sites.length === 0 && !editMode && category.isPopularCategory) {
                     grid.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">아직 자주 방문한 사이트가 없습니다. 사이트를 클릭하여 방문 횟수를 늘려보세요!</p>`;
-                } else if (category.sites.length === 0 && !editMode && !category.isPopularCategory) {
-                    grid.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">이 카테고리에 표시할 사이트가 없습니다.</p>`;
+                } else if (sites.length === 0 && !editMode && !category.isPopularCategory) {
+                    grid.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">이 카테고리에 표시할 아이템이 없습니다.</p>`;
                 }
 
 
                 // 4. 각 사이트/이벤트 카드 생성
-                category.sites.forEach((site, siteIndex) => {
-                    const categoryType = category.type || 'links';
+                sites.forEach((site, siteIndex) => {
+                    // [수정] 인기 카테고리인 경우, 타입을 'links'로 강제
+                    const categoryType = category.isPopularCategory ? 'links' : (category.type || 'links');
 
-                    if (categoryType === 'links' || category.isPopularCategory) {
+                    if (categoryType === 'links') {
                         // [기존] 사이트 카드 렌더링 로직
                         const card = document.createElement('a');
                         card.href = site.url;
@@ -1420,25 +1421,32 @@
 
                         card.addEventListener('click', (e) => {
                             if (!editMode) {
-                                // [버그 수정] 클릭 카운트 로직 수정
+                                // [수정] 클릭 카운트 로직 (인기/일반 구분)
                                 let targetCategoryIndex;
                                 let targetSiteIndex;
 
                                 if (category.isPopularCategory) {
+                                    // 인기 카테고리 클릭 시, 원본 인덱스를 사용
                                     targetCategoryIndex = site.originalCategoryIndex;
                                     targetSiteIndex = site.originalSiteIndex;
                                 } else {
-                                    targetCategoryIndex = actualIndex; // [버그 수정]
+                                    // 일반 카테고리 클릭 시, 현재 실제 인덱스 사용
+                                    targetCategoryIndex = realCategoryIndex;
                                     targetSiteIndex = siteIndex;
                                 }
 
                                 if (targetCategoryIndex !== undefined && targetSiteIndex !== undefined &&
-                                    siteData[targetCategoryIndex] && siteData[targetCategoryIndex].sites[targetSiteIndex]) {
+                                    siteData[targetCategoryIndex] && 
+                                    siteData[targetCategoryIndex].type === 'links' && // [수정] 링크 타입일 때만
+                                    siteData[targetCategoryIndex].sites[targetSiteIndex]) {
                                     
-                                    // [버그 수정] siteData의 clicks를 직접 증가
-                                    siteData[targetCategoryIndex].sites[targetSiteIndex].clicks = (siteData[targetCategoryIndex].sites[targetSiteIndex].clicks || 0) + 1;
+                                    // [수정] clicks 속성이 없으면 0으로 초기화 후 증가
+                                    if (typeof siteData[targetCategoryIndex].sites[targetSiteIndex].clicks !== 'number') {
+                                        siteData[targetCategoryIndex].sites[targetSiteIndex].clicks = 0;
+                                    }
                                     
-                                    // [버그 수정] options 객체를 save-data에 올바르게 전달
+                                    siteData[targetCategoryIndex].sites[targetSiteIndex].clicks++;
+                                    // [수정] 스크롤 위치 저장, 토스트 알림 끔
                                     saveData(true, { scrollY: window.scrollY, showToast: false });
                                 }
                             }
@@ -1448,11 +1456,11 @@
                             ${category.isPopularCategory ? '' : `
                             <div class="edit-card-controls absolute top-2 right-2 space-x-1">
                                 <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800"
-                                        data-category-index="${actualIndex}" data-site-index="${siteIndex}" title="사이트 수정">
+                                        data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="사이트 수정">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
                                 </button>
                                 <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800"
-                                        data-category-index="${actualIndex}" data-site-index="${siteIndex}" title="사이트 삭제">
+                                        data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="사이트 삭제">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </button>
                             </div>
@@ -1494,32 +1502,29 @@
                                 else if (diffDays < 0) ddayText = `D+${Math.abs(diffDays)}`;
                                 
                                 eventInfoHtml = `<h3 class="text-xl font-bold text-red-500">${ddayText}</h3>`;
-                            } else if (site.type === 'alarm') {
-                                // [버그 수정] targetDate가 유효한지 확인
-                                if (!isNaN(targetDate.getTime())) {
-                                    const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-                                    switch (site.recurrence) {
-                                        case 'daily':
-                                            eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매일 ${time}</p>`;
-                                            break;
-                                        case 'weekly':
-                                            const days = ['일', '월', '화', '수', '목', '금', '토'];
-                                            const day = days[targetDate.getDay()];
-                                            eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매주 ${day}요일 ${time}</p>`;
-                                            break;
-                                        case 'monthly':
-                                            const date = targetDate.getDate();
-                                            eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매월 ${date}일 ${time}</p>`;
-                                            break;
-                                        case 'yearly':
-                                            const month = targetDate.getMonth() + 1;
-                                            const dayOfMonth = targetDate.getDate();
-                                            eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매년 ${month}월 ${dayOfMonth}일 ${time}</p>`;
-                                            break;
-                                        default: // 'none'
-                                            eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">${targetDate.toLocaleString('ko-KR')}</p>`;
-                                            break;
-                                    }
+                            } else if (site.type === 'alarm' && !isNaN(targetDate.getTime())) { // [수정] 유효한 날짜인지 확인
+                                const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                                switch (site.recurrence) {
+                                    case 'daily':
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매일 ${time}</p>`;
+                                        break;
+                                    case 'weekly':
+                                        const days = ['일', '월', '화', '수', '목', '금', '토'];
+                                        const day = days[targetDate.getDay()];
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매주 ${day}요일 ${time}</p>`;
+                                        break;
+                                    case 'monthly':
+                                        const date = targetDate.getDate();
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매월 ${date}일 ${time}</p>`;
+                                        break;
+                                    case 'yearly':
+                                        const month = targetDate.getMonth() + 1;
+                                        const dayOfMonth = targetDate.getDate();
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매년 ${month}월 ${dayOfMonth}일 ${time}</p>`;
+                                        break;
+                                    default: // 'none'
+                                        eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">${targetDate.toLocaleString('ko-KR')}</p>`;
+                                        break;
                                 }
                             }
                         }
@@ -1527,11 +1532,11 @@
                         card.innerHTML = `
                             <div class="edit-card-controls absolute top-2 right-2 space-x-1">
                                 <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800"
-                                        data-category-index="${actualIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
+                                        data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
                                 </button>
                                 <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800"
-                                        data-category-index="${actualIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
+                                        data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                 </button>
                             </div>
@@ -1731,29 +1736,40 @@
             messageEl.innerHTML = message; // <br> 태그 등을 허용하기 위해 innerHTML 사용
             confirmModal.classList.remove('modal-hidden');
 
-            // 이벤트 리스너가 중복으로 쌓이는 것을 방지하기 위해, 한 번만 실행되도록 { once: true } 옵션 사용
-            const handleCancel = () => {
-                hideConfirmModal();
-                confirmBtn.removeEventListener('click', handleConfirm);
-                confirmModal.removeEventListener('click', handleOutsideClick);
-            };
+            // 기존 이벤트 리스너 제거 (중복 방지)
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-            const handleConfirm = () => {
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            // 새 리스너 등록
+            newCancelBtn.addEventListener('click', hideConfirmModal);
+            newConfirmBtn.addEventListener('click', () => {
                 hideConfirmModal();
                 onConfirm(); // 확인 시 콜백 함수 실행
-                cancelBtn.removeEventListener('click', handleCancel);
-                confirmModal.removeEventListener('click', handleOutsideClick);
-            };
+            });
             
-            const handleOutsideClick = (e) => {
-                if (e.target === confirmModal) {
-                    handleCancel();
-                }
-            };
+            // 모달 외부 클릭 리스너 (기존 리스너가 있다면 제거)
+            const newModal = confirmModal.cloneNode(true);
+            confirmModal.parentNode.replaceChild(newModal, confirmModal);
+            newModal.addEventListener('click', (e) => {
+                 if (e.target === newModal) {
+                    hideConfirmModal();
+                 }
+            });
 
-            cancelBtn.addEventListener('click', handleCancel, { once: true });
-            confirmBtn.addEventListener('click', handleConfirm, { once: true });
-            confirmModal.addEventListener('click', handleOutsideClick, { once: true });
+            // [버그 수정] 전역 참조 변수 업데이트
+            document.getElementById('cancel-confirm-btn').addEventListener('click', hideConfirmModal);
+            document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+                 hideConfirmModal();
+                 onConfirm();
+            });
+             document.getElementById('confirm-modal').addEventListener('click', (e) => {
+                 if (e.target === document.getElementById('confirm-modal')) {
+                    hideConfirmModal();
+                 }
+            });
         }
 
         function hideConfirmModal() {
@@ -1794,6 +1810,9 @@
                 animation: 150,
                 handle: '.category-title-wrapper', // 카테고리 제목 영역을 핸들로 사용
                 ghostClass: 'ghost-category',
+                // [수정] '자주 방문' 카테고리는 드래그 대상에서 제외
+                filter: '#category-popular', 
+                preventOnFilter: true,
                 onEnd: (evt) => {
                     const scrollY = window.scrollY;
 
@@ -1827,8 +1846,14 @@
                 }
                 
                 // [신규] 카테고리 타입에 따라 드래그 그룹 분리
-                const categoryRealIndex = parseInt(grid.dataset.categoryIndex, 10); // [버그 수정]
-                const categoryType = (categoryRealIndex >= 0 && siteData[categoryRealIndex]) ? siteData[categoryRealIndex].type : 'links';
+                const categoryRealIndex = parseInt(grid.dataset.categoryIndex, 10);
+                
+                // [수정] categoryRealIndex가 유효한지 확인
+                if (isNaN(categoryRealIndex) || categoryRealIndex < 0 || !siteData[categoryRealIndex]) {
+                    return;
+                }
+
+                const categoryType = siteData[categoryRealIndex].type || 'links';
 
                 const s = new Sortable(grid, {
                     animation: 150,
@@ -1838,11 +1863,18 @@
                         // [수정] 렌더링 전 스크롤 위치 저장
                         const scrollY = window.scrollY;
 
-                        // [버그 수정] 렌더링 인덱스가 아닌 실제 인덱스 사용
                         const fromCategoryIndex = parseInt(evt.from.dataset.categoryIndex, 10);
                         const toCategoryIndex = parseInt(evt.to.dataset.categoryIndex, 10);
                         const oldIndex = evt.oldDraggableIndex;
                         const newIndex = evt.newDraggableIndex;
+
+                        // [수정] 인덱스 유효성 검사
+                        if (isNaN(fromCategoryIndex) || isNaN(toCategoryIndex) || 
+                            !siteData[fromCategoryIndex] || !siteData[toCategoryIndex]) {
+                            console.error("Drag and drop index error.");
+                            saveData(true, { scrollY: scrollY }); // UI 동기화
+                            return;
+                        }
 
                         // 1. 기존 카테고리에서 아이템 제거
                         const item = siteData[fromCategoryIndex].sites.splice(oldIndex, 1)[0];
@@ -1884,30 +1916,37 @@
             spinner.classList.remove('hidden');
 
             try {
+                // [보안/CORS 수정] CORS 문제를 우회하기 위해 범용 프록시 API (microlink.io) 사용
                 const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
                 if (!response.ok) {
                     // API 자체가 에러를 반환한 경우 (e.g., 404, 500)
                     throw new Error(`API 요청 실패 (상태 코드: ${response.status})`);
                 }
                 const data = await response.json();
-                const responseData = data.data; // microlink는 'data' 객체 안에 실제 데이터가 있습니다.
-
-                if (responseData.title) {
-                    document.getElementById('site-name').value = responseData.title;
-                }
-                if (responseData.description) {
-                    document.getElementById('site-description').value = responseData.description;
-                }
                 
-                // 로고 URL을 우선적으로 사용하고, 없으면 이미지 URL을 사용
-                const iconUrl = responseData.logo?.url || responseData.image?.url;
-                if (iconUrl) {
-                    document.getElementById('site-icon').value = iconUrl;
-                    const preview = document.getElementById('site-icon-preview');
-                    preview.src = iconUrl;
-                    preview.classList.remove('hidden');
+                // [수정] microlink API 응답 구조에 맞게 수정
+                if (data.status === 'success' && data.data) {
+                    const responseData = data.data; 
+
+                    if (responseData.title) {
+                        document.getElementById('site-name').value = responseData.title;
+                    }
+                    if (responseData.description) {
+                        document.getElementById('site-description').value = responseData.description;
+                    }
+                    
+                    // 로고 URL을 우선적으로 사용하고, 없으면 이미지 URL을 사용
+                    const iconUrl = responseData.logo?.url || responseData.image?.url;
+                    if (iconUrl) {
+                        document.getElementById('site-icon').value = iconUrl;
+                        const preview = document.getElementById('site-icon-preview');
+                        preview.src = iconUrl;
+                        preview.classList.remove('hidden');
+                    }
+                    showToast("사이트 정보를 성공적으로 가져왔습니다.");
+                } else {
+                     throw new Error(data.message || "API에서 데이터를 가져오지 못했습니다.");
                 }
-                showToast("사이트 정보를 성공적으로 가져왔습니다.");
 
             } catch (error) {
                 console.error("Metadata fetch failed:", error);
@@ -1925,9 +1964,16 @@
             }
         }
 
-        // --- [신규] Google Drive 연동 기능 (GIS 라이브러리, 자동 로그인, 타임스탬프, 상태 기억 포함) ---
+        // --- [신규] Google Drive 연동 기능 (GIS 라이브러리 사용) ---
 
         // [개발자 설정 필요]
+        // 1. Google Cloud Console(https://console.cloud.google.com/)에서 프로젝트를 생성합니다.
+        // 2. 'API 및 서비스' > '라이브러리'에서 'Google Drive API'를 사용 설정합니다.
+        // 3. 'API 및 서비스' > '사용자 인증 정보'에서 'OAuth 2.0 클라이언트 ID'를 생성합니다.
+        //    - 애플리케이션 유형: 웹 애플리케이션
+        //    - 승인된 자바스크립트 원본: 현재 대시보드를 호스팅하는 URL (예: https://username.github.io 또는 http://localhost:8000 등)
+        // 4. 'API 및 서비스' > '사용자 인증 정보'에서 'API 키'를 생성합니다. (Drive API는 보통 API 키가 필요없을 수 있으나, GAPI 로드를 위해 필요할 수 있습니다.)
+        // 5. 아래 YOUR_API_KEY와 YOUR_CLIENT_ID를 자신의 값으로 변경합니다.
         const API_KEY = 'AIzaSyAO8OoKfWN-fpogK_KV6BmwO1HBKEwhkjo';
         const CLIENT_ID = '699523840547-va0r836vj910aghjre2iibtuop1eusnb.apps.googleusercontent.com';
 
@@ -1939,8 +1985,7 @@
         let gapiInited = false;
         let gisInited = false;
         let gapiToken = null;
-        let triedSilentLogin = false;
-        let isSilentAttempt = false; // 자동 로그인 시도인지 여부를 구별하는 플래그
+        let isSilentAttempt = false; // [신규] 자동 로그인 시도 플래그
 
         function gapiLoaded() {
             gapi.load('client', initializeGapiClient);
@@ -1953,128 +1998,117 @@
                     discoveryDocs: DISCOVERY_DOCS,
                 });
                 gapiInited = true;
-                if (gisInited && !triedSilentLogin) {
-                    trySilentLogin();
-                }
             } catch (error) {
-                console.error("GAPI client initialization failed:", error);
-                // API 키가 유효하지 않거나 비어있을 때 여기서 오류가 발생할 수 있습니다.
-                showToast("Google API 클라이언트 초기화 실패. API 키를 확인하세요.", true);
+                 console.error("GAPI Client 초기화 실패:", error);
+                 // API 키가 잘못되었을 때 흔히 발생
+                 if (error.details) {
+                     showToast(`GAPI 초기화 실패: ${error.details}`, true);
+                 } else {
+                     showToast("GAPI Client 초기화에 실패했습니다. API 키를 확인하세요.", true);
+                 }
             }
         }
 
         function gisLoaded() {
+            if (!CLIENT_ID) {
+                 console.error("Google Client ID가 설정되지 않았습니다.");
+                 return;
+            }
             try {
                 tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: CLIENT_ID,
                     scope: SCOPES,
-                    callback: tokenCallback,
+                    callback: tokenCallback, // 응답을 처리할 콜백 함수
                 });
                 gisInited = true;
-                if (gapiInited && !triedSilentLogin) {
-                    trySilentLogin();
-                }
             } catch (error) {
-                console.error("GIS client initialization failed:", error);
-                // CLIENT_ID가 유효하지 않거나 비어있을 때 여기서 오류가 발생할 수 있습니다.
-                showToast("Google 인증 클라이언트 초기화 실패. Client ID를 확인하세요.", true);
+                console.error("GSI Client 초기화 실패:", error);
+                showToast("GSI Client 초기화에 실패했습니다. Client ID를 확인하세요.", true);
             }
         }
 
+        // [신규] 자동 로그인 시도 함수 (API 준비 대기 포함)
         function trySilentLogin() {
-            triedSilentLogin = true;
-            // [수정] '로그인 했었음' 플래그가 있을 때만 자동 로그인 시도
-            const userWasLoggedIn = localStorage.getItem('gdrive_user_logged_in') === 'true';
+            // API가 준비될 때까지 100ms마다 확인 (최대 10초)
+            let attempts = 0;
+            const maxAttempts = 100; // 100 * 100ms = 10 seconds
 
-            // [수정] API_KEY와 CLIENT_ID가 설정되었는지도 확인 (placeholder 값 비교 수정)
-            const isApiConfigured = API_KEY && CLIENT_ID && API_KEY !== '' && CLIENT_ID !== '' && API_KEY !== 'YOUR_API_KEY' && CLIENT_ID !== 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+            function checkApis() {
+                if (API_KEY === '' || CLIENT_ID === '') {
+                    console.warn("API 키 또는 Client ID가 설정되지 않아 자동 로그인을 건너뜁니다.");
+                    updateSigninStatus(false);
+                    return;
+                }
 
-            if (userWasLoggedIn && isApiConfigured) {
-                isSilentAttempt = true;
-                tokenClient.requestAccessToken({prompt: 'none'});
-            } else {
-                updateSigninStatus(false);
+                if (gapiInited && gisInited) {
+                    console.log("APIs ready, attempting silent login.");
+                    isSilentAttempt = true;
+                    // 'none' 프롬프트로 자동 로그인 시도
+                    tokenClient.requestAccessToken({prompt: 'none'});
+                } else if (attempts < maxAttempts) {
+                    // 아직 준비되지 않았으면 잠시 후 다시 시도
+                    attempts++;
+                    setTimeout(checkApis, 100);
+                } else {
+                    // 타임아웃
+                    console.warn("Silent login timed out waiting for GAPI/GSI.");
+                    updateSigninStatus(false); // API 로드 실패 시 로그아웃 상태로 표시
+                }
             }
+            checkApis();
         }
 
+        // [수정] tokenCallback 함수 (자동 로그인 로직 적용)
         function tokenCallback(tokenResponse) {
             if (tokenResponse && tokenResponse.access_token) {
+                // 1. 로그인 성공 (수동 또는 자동)
                 gapiToken = tokenResponse;
                 gapi.client.setToken(gapiToken);
-                localStorage.setItem('gdrive_user_logged_in', 'true'); // [수정] 로그인 상태 플래그 설정
                 updateSigninStatus(true);
+                
+                // [신규] 로그인 상태 localStorage에 저장
+                localStorage.setItem('gdrive_user_logged_in', 'true');
+                
+                // [신규] 수동 로그인일 때만 토스트 알림 표시
                 if (!isSilentAttempt) {
                     showToast("Google 계정에 로그인되었습니다.");
                 }
             } else {
-                updateSigninStatus(false);
-                // [수정] 자동 로그인(Silent Login) 실패 시 플래그를 제거하지 않습니다.
-                // 사용자가 수동으로 '로그아웃' 버튼을 클릭할 때만 플래그가 제거되어야 합니다.
-                // if (isSilentAttempt) {
-                //     localStorage.removeItem('gdrive_user_logged_in');
-                // }
-                if (!isSilentAttempt) {
-                    showToast("로그인에 실패했습니다. 팝업이 차단되었거나, 브라우저에 Google 계정 로그인이 필요할 수 있습니다.", true);
+                // 2. 로그인 실패
+                console.error("Access token not found in response:", tokenResponse);
+                
+                if (isSilentAttempt) {
+                    // 2a. [신규] 자동 로그인 실패
+                    // 사용자의 요청대로 localStorage를 삭제하지 않음
+                    // UI만 로그아웃 상태로 변경하여, 필요시 수동 로그인을 유도
+                    console.log("Silent login failed. User needs to re-authenticate manually.");
+                    updateSigninStatus(false);
+                } else {
+                    // 2b. 수동 로그인 실패
+                    showToast("로그인에 실패했습니다.", true);
                 }
             }
-            isSilentAttempt = false; // 시도 완료 후 플래그 초기화
-        }
-
-        // [신규] 타임스탬프 포맷 함수
-        function formatSyncTimestamp(dateString) {
-            if (!dateString) return '없음';
-            const d = new Date(dateString);
-            const yy = d.getFullYear().toString().slice(-2);
-            const mm = (d.getMonth() + 1).toString().padStart(2, '0');
-            const dd = d.getDate().toString().padStart(2, '0');
-            const hh = d.getHours().toString().padStart(2, '0');
-            const mi = d.getMinutes().toString().padStart(2, '0');
-            const ss = d.getSeconds().toString().padStart(2, '0');
-            return `${yy}${mm}${dd}.${hh}${mi}${ss}`;
-        }
-
-        // [신규] 타임스탬프 UI 업데이트 함수
-        function updateTimestamps() {
-            const lastExport = localStorage.getItem('gdrive_last_export_timestamp');
-            const lastImport = localStorage.getItem('gdrive_last_import_timestamp');
             
-            const formattedExport = formatSyncTimestamp(lastExport);
-            const formattedImport = formatSyncTimestamp(lastImport);
-
-            // 설정 패널의 타임스탬프 업데이트
-            document.getElementById('gdrive-export-timestamp').textContent = `마지막 내보내기: ${formattedExport}`;
-            document.getElementById('gdrive-import-timestamp').textContent = `마지막 가져오기: ${formattedImport}`;
-
-            // 헤더의 타임스탬프 업데이트
-            document.getElementById('gdrive-export-timestamp-header').textContent = `내보내기: ${formattedExport}`;
-            document.getElementById('gdrive-import-timestamp-header').textContent = `가져오기: ${formattedImport}`;
+            // [신규] 시도 플래그 초기화
+            isSilentAttempt = false;
         }
+
 
         function updateSigninStatus(isSignedIn) {
             const authorizeBtn = document.getElementById('gdrive-authorize-btn');
             const signoutContainer = document.getElementById('gdrive-signout-container');
             const gdriveActionsContainer = document.getElementById('gdrive-actions-container');
-            const gdriveHeaderActions = document.getElementById('gdrive-header-actions');
-            const gdriveTimestampContainer = document.getElementById('gdrive-timestamp-container');
-            const gdriveHeaderTimestamps = document.getElementById('gdrive-header-timestamps'); // [신규] 헤더 타임스탬프 컨테이너
             const statusEl = document.getElementById('gdrive-status');
 
             if (isSignedIn) {
                 authorizeBtn.style.display = 'none';
                 signoutContainer.style.display = 'flex';
                 gdriveActionsContainer.style.display = 'grid';
-                gdriveHeaderActions.style.display = 'flex';
-                gdriveTimestampContainer.style.display = 'block';
-                gdriveHeaderTimestamps.style.display = 'flex'; // [신규] 헤더 타임스탬프 표시
                 statusEl.textContent = `Google 계정 로그인됨`;
-                updateTimestamps(); // 로그인 시 타임스탬프 업데이트
             } else {
                 authorizeBtn.style.display = 'block';
                 signoutContainer.style.display = 'none';
                 gdriveActionsContainer.style.display = 'none';
-                gdriveHeaderActions.style.display = 'none';
-                gdriveTimestampContainer.style.display = 'none';
-                gdriveHeaderTimestamps.style.display = 'none'; // [신규] 헤더 타임스탬프 숨기기
                 statusEl.textContent = '로그인되지 않음';
             }
         }
@@ -2090,31 +2124,39 @@
             showToast(message, true);
         }
 
+        // [수정] 수동 로그인 (handleAuthClick)
         function handleAuthClick() {
-            // [수정] API_KEY와 CLIENT_ID가 비어있는지, 또는 기본 placeholder 값인지 확인
-            if (API_KEY === '' || CLIENT_ID === '' || API_KEY === 'YOUR_API_KEY' || CLIENT_ID === 'YOUR_CLIENT_ID.apps.googleusercontent.com') {
-                showToast("Google Drive API 키가 설정되지 않았습니다. 코드 내 API_KEY와 CLIENT_ID를 확인하세요.", true);
+            if (API_KEY === '' || CLIENT_ID === '') {
+                showToast("Google Drive API 키 또는 Client ID가 설정되지 않았습니다. 코드 내 안내를 확인하세요.", true);
                 return;
             }
             if (gapiInited && gisInited) {
-                isSilentAttempt = false;
-                tokenClient.requestAccessToken({prompt: ''});
+                isSilentAttempt = false; // [신규] 수동 로그인 플래그 설정
+                tokenClient.requestAccessToken({prompt: ''}); // prompt: '' (또는 생략)는 사용자 상호작용(팝업)을 허용
             } else {
                 showToast("Google API가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.", true);
             }
         }
 
+        // [수정] 로그아웃 (handleSignoutClick)
         function handleSignoutClick() {
+            // [신규] 로그아웃 시 localStorage 플래그 즉시 제거
+            localStorage.removeItem('gdrive_user_logged_in');
+
             if (gapiToken) {
+                // 토큰이 있으면 Google에서 토큰 해지
                 google.accounts.oauth2.revoke(gapiToken.access_token, () => {
                     gapiToken = null;
                     gapi.client.setToken(null);
-                    localStorage.removeItem('gdrive_user_logged_in'); // [수정] 로그인 상태 플래그 제거
                     updateSigninStatus(false);
                     showToast("로그아웃되었습니다.");
                 });
+            } else {
+                // 토큰이 없더라도 (예: 자동 로그인 실패 상태) UI는 확실히 로그아웃 처리
+                updateSigninStatus(false);
             }
         }
+
 
         async function findOrCreateFile() {
             try {
@@ -2189,8 +2231,6 @@
                     body: multipartRequestBody
                 });
                 showToast("Google Drive에 성공적으로 저장했습니다.");
-                localStorage.setItem('gdrive_last_export_timestamp', new Date().toISOString());
-                updateTimestamps();
             } catch (error) {
                 handleApiError(error, "Google Drive 내보내기 실패");
             }
@@ -2219,7 +2259,6 @@
 
                 const importedData = response.result;
                 if (importedData && importedData.dashboardData) {
-                    localStorage.setItem('gdrive_last_import_timestamp', new Date().toISOString());
                     localStorage.setItem('myDashboardData', JSON.stringify(importedData.dashboardData));
                     localStorage.setItem('theme', importedData.theme || 'light');
                     localStorage.setItem('searchEngine', importedData.searchEngine || 'google');
@@ -2267,7 +2306,7 @@
                             const name = site.querySelector('h3').textContent.toLowerCase();
                             const description = site.querySelector('p').textContent.toLowerCase();
                             // [신규] URL도 검색 대상에 포함
-                            const url = site.href ? site.href.toLowerCase() : ''; // [버그 수정] href가 없는 이벤트 카드 고려
+                            const url = site.href.toLowerCase();
 
                             if (name.includes(searchTerm) || description.includes(searchTerm) || url.includes(searchTerm)) {
                                 site.classList.remove('hidden');
@@ -2369,8 +2408,6 @@
             document.getElementById('gdrive-signout-btn').addEventListener('click', handleSignoutClick);
             document.getElementById('import-gdrive-btn').addEventListener('click', importFromGoogleDrive);
             document.getElementById('export-gdrive-btn').addEventListener('click', exportToGoogleDrive);
-            document.getElementById('import-gdrive-btn-header').addEventListener('click', importFromGoogleDrive);
-            document.getElementById('export-gdrive-btn-header').addEventListener('click', exportToGoogleDrive);
 
             // 메인 콘텐츠 영역 이벤트 위임 (동적으로 생성된 버튼 처리)
             mainContent.addEventListener('click', (e) => {
@@ -2386,12 +2423,18 @@
                 const deleteSiteBtn = e.target.closest('.delete-site-btn');
                 const clearClicksBtn = e.target.closest('#clear-clicks-btn');
 
-                // [버그 수정] data-category-index를 직접 사용
+                // [버그 수정] '자주 방문하는 사이트' 카테고리가 표시될 때 인덱스 보정
+                const popularCategoryExists = document.getElementById('category-popular') !== null;
                 
+                function getRealCategoryIndex(renderIndex) {
+                    const index = parseInt(renderIndex, 10);
+                    // 인기 카테고리가 존재하면, 렌더링 인덱스에서 1을 빼서 실제 siteData 인덱스를 구함
+                    return popularCategoryExists ? index - 1 : index;
+                }
+
                 if (addSiteBtn) {
                     e.preventDefault();
-                    const realIndex = parseInt(addSiteBtn.dataset.categoryIndex, 10); // [버그 수정]
-                    if (realIndex < 0 || realIndex >= siteData.length) return; // [버그 수정] 유효하지 않은 인덱스 방지
+                    const realIndex = getRealCategoryIndex(addSiteBtn.dataset.categoryIndex);
                     // [신규] 카테고리 타입에 따라 다른 모달 호출
                     if (siteData[realIndex] && siteData[realIndex].type === 'events') {
                         showEventModal(realIndex);
@@ -2401,14 +2444,12 @@
                 } 
                 else if (editCategoryBtn) {
                     e.preventDefault();
-                    const realIndex = parseInt(editCategoryBtn.dataset.categoryIndex, 10); // [버그 수정]
-                    if (realIndex < 0 || realIndex >= siteData.length) return; // [버그 수정]
+                    const realIndex = getRealCategoryIndex(editCategoryBtn.dataset.categoryIndex);
                     showCategoryModal(realIndex);
                 } 
                 else if (deleteCategoryBtn) {
                     e.preventDefault();
-                    const realIndex = parseInt(deleteCategoryBtn.dataset.categoryIndex, 10); // [버그 수정]
-                    if (realIndex < 0 || realIndex >= siteData.length) return; // [버그 수정]
+                    const realIndex = getRealCategoryIndex(deleteCategoryBtn.dataset.categoryIndex);
                     showConfirmModal(
                         `'${siteData[realIndex].category}' 카테고리를 정말 삭제하시겠습니까?<br><br><span class="text-sm text-red-500">포함된 모든 사이트가 함께 삭제됩니다.</span>`,
                         () => {
@@ -2419,9 +2460,8 @@
                 } 
                 else if (editSiteBtn) {
                     e.preventDefault();
-                    const realIndex = parseInt(editSiteBtn.dataset.categoryIndex, 10); // [버그 수정]
-                    const siteIndex = parseInt(editSiteBtn.dataset.siteIndex, 10); // [버그 수정]
-                    if (realIndex < 0 || realIndex >= siteData.length) return; // [버그 수정]
+                    const realIndex = getRealCategoryIndex(editSiteBtn.dataset.categoryIndex);
+                    const siteIndex = editSiteBtn.dataset.siteIndex;
                     // [신규] 카테고리 타입에 따라 다른 모달 호출
                     if (siteData[realIndex] && siteData[realIndex].type === 'events') {
                         showEventModal(realIndex, siteIndex);
@@ -2431,9 +2471,8 @@
                 } 
                 else if (deleteSiteBtn) {
                     e.preventDefault();
-                    const realCatIndex = parseInt(deleteSiteBtn.dataset.categoryIndex, 10); // [버그 수정]
-                    const siteIndex = parseInt(deleteSiteBtn.dataset.siteIndex, 10); // [버그 수정]
-                    if (realCatIndex < 0 || realCatIndex >= siteData.length) return; // [버그 수정]
+                    const realCatIndex = getRealCategoryIndex(deleteSiteBtn.dataset.categoryIndex);
+                    const siteIndex = deleteSiteBtn.dataset.siteIndex;
                     showConfirmModal(
                         `'${siteData[realCatIndex].sites[siteIndex].name}' 사이트를 정말 삭제하시겠습니까?`,
                         () => {
@@ -2466,3 +2505,184 @@
             
             // [신규] 이벤트 모달 타입 변경 시 필드 토글
             document.getElementById('event-type').addEventListener('change', (e) => {
+                const ddayFields = document.getElementById('dday-fields');
+                const alarmFields = document.getElementById('alarm-fields');
+                if (e.target.value === 'dday') {
+                    ddayFields.classList.remove('hidden');
+                    alarmFields.classList.add('hidden');
+                } else {
+                    ddayFields.classList.add('hidden');
+                    alarmFields.classList.remove('hidden');
+                }
+            });
+
+            // [신규] 이모지 선택기 버튼 이벤트
+            document.getElementById('emoji-selector').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    document.getElementById('event-icon').value = e.target.textContent;
+                }
+            });
+
+            // 모달 외부 클릭 시 닫기
+            siteModal.addEventListener('click', (e) => {
+                if (e.target === siteModal) hideModals();
+            });
+            categoryModal.addEventListener('click', (e) => {
+                if (e.target === categoryModal) hideModals();
+            });
+            titleModal.addEventListener('click', (e) => { // [추가]
+                if (e.target === titleModal) hideModals();
+            });
+            eventModal.addEventListener('click', (e) => { // [신규]
+                if (e.target === eventModal) hideModals();
+            });
+
+            // [추가] 파일 입력 변경 이벤트 (FileReader로 Base64 인코딩)
+            document.getElementById('site-icon-file').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const preview = document.getElementById('site-icon-preview');
+                const iconInput = document.getElementById('site-icon');
+
+                if (!file) {
+                    return;
+                }
+
+                // 파일 크기 제한 (1MB)
+                if (file.size > 1024 * 1024) {
+                    showToast('파일 크기가 너무 큽니다 (1MB 이하).', true);
+                    e.target.value = ''; // 파일 선택 초기화
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    // Base64 데이터를 텍스트 입력창에 설정
+                    iconInput.value = dataUrl;
+                    // 미리보기 이미지 설정
+                    preview.src = dataUrl;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 사이트 폼 제출
+            siteForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const categoryIndex = document.getElementById('category-index').value;
+                const siteIndex = document.getElementById('site-index').value;
+                
+                const site = {
+                    name: document.getElementById('site-name').value,
+                    url: document.getElementById('site-url').value,
+                    icon: document.getElementById('site-icon').value,
+                    description: document.getElementById('site-description').value,
+                };
+
+                if (siteIndex) { // 수정
+                    siteData[categoryIndex].sites[siteIndex] = site;
+                } else { // 추가
+                    siteData[categoryIndex].sites.push(site);
+                }
+                saveData();
+                hideModals();
+            });
+
+            // 카테고리 폼 제출
+            categoryForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const categoryIndex = document.getElementById('edit-category-index').value;
+                const categoryName = document.getElementById('category-name').value;
+                const categoryColor = document.getElementById('category-color').value;
+                const categoryType = document.getElementById('category-type').value; // [신규] 타입 값 가져오기
+
+                if (categoryIndex) { // 수정
+                    siteData[categoryIndex].category = categoryName;
+                    siteData[categoryIndex].color = categoryColor;
+                    siteData[categoryIndex].type = categoryType; // [신규] 타입 업데이트
+                } else { // 추가
+                    siteData.push({ category: categoryName, type: categoryType, sites: [], color: categoryColor });
+                }
+                saveData();
+                hideModals();
+            });
+
+            // [추가] 제목 폼 제출
+            titleForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                dashboardTitle = document.getElementById('dashboard-title-input').value;
+                saveData();
+                hideModals();
+            });
+
+            // [신규] 이벤트 폼 제출
+            document.getElementById('event-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const categoryIndex = document.getElementById('event-category-index').value;
+                const eventIndex = document.getElementById('event-index').value;
+                const eventType = document.getElementById('event-type').value;
+
+                const eventData = {
+                    type: eventType,
+                    name: document.getElementById('event-name').value,
+                    icon: document.getElementById('event-icon').value,
+                    targetDate: eventType === 'dday' 
+                        ? document.getElementById('event-date').value 
+                        : document.getElementById('event-datetime').value,
+                    recurrence: document.getElementById('event-recurrence').value, // [신규] 반복 정보 추가
+                };
+
+                if (!eventData.targetDate) {
+                    showToast('날짜 또는 시간을 입력해주세요.', true);
+                    return;
+                }
+
+                if (eventIndex) { // 수정
+                    siteData[categoryIndex].sites[eventIndex] = eventData;
+                } else { // 추가
+                    siteData[categoryIndex].sites.push(eventData);
+                }
+                saveData();
+                hideModals();
+            });
+
+            // --- [추가] 내보내기/가져오기 리스너 ---
+            
+            // 내보내기 버튼
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            
+            // 가져오기 버튼 (숨겨진 파일 입력창을 대신 클릭)
+            document.getElementById('import-btn').addEventListener('click', () => {
+                document.getElementById('import-file-input').click();
+            });
+            
+            // 파일이 실제로 선택되었을 때
+            document.getElementById('import-file-input').addEventListener('change', importData);
+            
+            // 검색창 제출 시 입력창 비우기
+            searchForm.addEventListener('submit', () => {
+                setTimeout(() => {
+                    searchInput.value = '';
+                }, 100);
+            });
+        }
+
+
+        // --- [수정] 3.16 -> 3.17. 스크립트 실행 (DOM 로드 완료 후) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadZoom();             // 0. [추가] 확대/축소 레벨 먼저 로드
+            loadFont();             // 0. [폰트 변경 추가] 폰트 로드 (영구 저장된 것만)
+            loadData();             // 1. 데이터 로드 (localStorage 또는 기본값)
+            renderCards();          // 2. 카드 렌더링 (여기서 카테고리 내비게이션도 렌더링됨)
+            renderSummaryBoxes();   // [신규] 요약 박스 렌더링
+            setupThemeToggle();     // 3. 테마 토글 설정
+            setupEventListeners();  // 4. [추가] 모든 설정 관련 이벤트 리스너 활성화
+            setupSearchEngine();    // 5. [추가] 검색 엔진 설정
+            
+            updateTime();           // 6. 최초 시간 표시
+            setInterval(updateTime, 1000); // 7. 1초마다 시간 업데이트
+        });
+    </script>
+</body>
+</html>
+
