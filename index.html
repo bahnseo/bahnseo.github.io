@@ -417,6 +417,10 @@
                         Drive로 내보내기
                     </button>
                 </div>
+                <div id="gdrive-timestamp-container" class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center" style="display: none;">
+                    <p id="gdrive-export-timestamp">마지막 내보내기: 없음</p>
+                    <p id="gdrive-import-timestamp">마지막 가져오기: 없음</p>
+                </div>
                 <p class="text-xs text-gray-500 mt-2">Google Drive 연동 기능은 사용자가 직접 Google Cloud에서 API 키를 발급받아야 정상적으로 동작합니다.</p>
             </div>
         </div>
@@ -1901,16 +1905,10 @@
             }
         }
 
-        // --- [신규] Google Drive 연동 기능 (GIS 라이브러리 사용) ---
+        // --- [신규] Google Drive 연동 기능 (GIS 라이브러리, 자동 로그인, 타임스탬프 포함) ---
 
         // [개발자 설정 필요]
-        // 1. Google Cloud Console(https://console.cloud.google.com/)에서 프로젝트를 생성합니다.
-        // 2. 'API 및 서비스' > '라이브러리'에서 'Google Drive API'를 사용 설정합니다.
-        // 3. 'API 및 서비스' > '사용자 인증 정보'에서 'OAuth 2.0 클라이언트 ID'를 생성합니다.
-        //    - 애플리케이션 유형: 웹 애플리케이션
-        //    - 승인된 자바스크립트 원본: 현재 대시보드를 호스팅하는 URL (예: https://username.github.io)
-        // 4. 'API 및 서비스' > '사용자 인증 정보'에서 'API 키'를 생성합니다.
-        // 5. 아래 YOUR_API_KEY와 YOUR_CLIENT_ID를 자신의 값으로 변경합니다.
+        // ... (주석은 이전과 동일)
         const API_KEY = 'AIzaSyAO8OoKfWN-fpogK_KV6BmwO1HBKEwhkjo';
         const CLIENT_ID = '699523840547-va0r836vj910aghjre2iibtuop1eusnb.apps.googleusercontent.com';
 
@@ -1922,6 +1920,7 @@
         let gapiInited = false;
         let gisInited = false;
         let gapiToken = null;
+        let triedSilentLogin = false;
 
         function gapiLoaded() {
             gapi.load('client', initializeGapiClient);
@@ -1933,6 +1932,9 @@
                 discoveryDocs: DISCOVERY_DOCS,
             });
             gapiInited = true;
+            if (gisInited && !triedSilentLogin) {
+                trySilentLogin();
+            }
         }
 
         function gisLoaded() {
@@ -1942,18 +1944,59 @@
                 callback: tokenCallback,
             });
             gisInited = true;
+            if (gapiInited && !triedSilentLogin) {
+                trySilentLogin();
+            }
+        }
+
+        function trySilentLogin() {
+            triedSilentLogin = true;
+            if (CLIENT_ID && CLIENT_ID !== 'YOUR_CLIENT_ID.apps.googleusercontent.com') {
+                tokenClient.requestAccessToken({prompt: 'none'});
+            } else {
+                updateSigninStatus(false);
+            }
         }
 
         function tokenCallback(tokenResponse) {
+            const isSilentLoginFailure = tokenResponse.error && tokenResponse.error === "popup_closed";
+
             if (tokenResponse && tokenResponse.access_token) {
                 gapiToken = tokenResponse;
                 gapi.client.setToken(gapiToken);
                 updateSigninStatus(true);
-                showToast("Google 계정에 로그인되었습니다.");
+                if (tokenResponse.prompt !== 'none') {
+                    showToast("Google 계정에 로그인되었습니다.");
+                }
+            } else if (!isSilentLoginFailure) {
+                updateSigninStatus(false);
+                if (tokenResponse.error && tokenResponse.error !== "user_cancel") {
+                     showToast("로그인에 실패했습니다.", true);
+                }
             } else {
-                console.error("Access token not found in response.");
-                showToast("로그인에 실패했습니다.", true);
+                 updateSigninStatus(false);
             }
+        }
+
+        // [신규] 타임스탬프 포맷 함수
+        function formatSyncTimestamp(dateString) {
+            if (!dateString) return '없음';
+            const d = new Date(dateString);
+            const yy = d.getFullYear().toString().slice(-2);
+            const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+            const dd = d.getDate().toString().padStart(2, '0');
+            const hh = d.getHours().toString().padStart(2, '0');
+            const mi = d.getMinutes().toString().padStart(2, '0');
+            const ss = d.getSeconds().toString().padStart(2, '0');
+            return `${yy}${mm}${dd}.${hh}${mi}${ss}`;
+        }
+
+        // [신규] 타임스탬프 UI 업데이트 함수
+        function updateTimestamps() {
+            const lastExport = localStorage.getItem('gdrive_last_export_timestamp');
+            const lastImport = localStorage.getItem('gdrive_last_import_timestamp');
+            document.getElementById('gdrive-export-timestamp').textContent = `마지막 내보내기: ${formatSyncTimestamp(lastExport)}`;
+            document.getElementById('gdrive-import-timestamp').textContent = `마지막 가져오기: ${formatSyncTimestamp(lastImport)}`;
         }
 
         function updateSigninStatus(isSignedIn) {
@@ -1961,6 +2004,7 @@
             const signoutContainer = document.getElementById('gdrive-signout-container');
             const gdriveActionsContainer = document.getElementById('gdrive-actions-container');
             const gdriveHeaderActions = document.getElementById('gdrive-header-actions');
+            const gdriveTimestampContainer = document.getElementById('gdrive-timestamp-container');
             const statusEl = document.getElementById('gdrive-status');
 
             if (isSignedIn) {
@@ -1968,12 +2012,14 @@
                 signoutContainer.style.display = 'flex';
                 gdriveActionsContainer.style.display = 'grid';
                 gdriveHeaderActions.style.display = 'flex';
+                gdriveTimestampContainer.style.display = 'block'; // 타임스탬프 보이기
                 statusEl.textContent = `Google 계정 로그인됨`;
             } else {
                 authorizeBtn.style.display = 'block';
                 signoutContainer.style.display = 'none';
                 gdriveActionsContainer.style.display = 'none';
                 gdriveHeaderActions.style.display = 'none';
+                gdriveTimestampContainer.style.display = 'none'; // 타임스탬프 숨기기
                 statusEl.textContent = '로그인되지 않음';
             }
         }
@@ -1995,7 +2041,7 @@
                 return;
             }
             if (gapiInited && gisInited) {
-                tokenClient.requestAccessToken();
+                tokenClient.requestAccessToken({prompt: ''});
             } else {
                 showToast("Google API가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.", true);
             }
@@ -2085,6 +2131,9 @@
                     body: multipartRequestBody
                 });
                 showToast("Google Drive에 성공적으로 저장했습니다.");
+                // [신규] 내보내기 성공 시 타임스탬프 저장 및 UI 업데이트
+                localStorage.setItem('gdrive_last_export_timestamp', new Date().toISOString());
+                updateTimestamps();
             } catch (error) {
                 handleApiError(error, "Google Drive 내보내기 실패");
             }
@@ -2113,6 +2162,9 @@
 
                 const importedData = response.result;
                 if (importedData && importedData.dashboardData) {
+                    // [신규] 가져오기 성공 시 타임스탬프 저장
+                    localStorage.setItem('gdrive_last_import_timestamp', new Date().toISOString());
+
                     localStorage.setItem('myDashboardData', JSON.stringify(importedData.dashboardData));
                     localStorage.setItem('theme', importedData.theme || 'light');
                     localStorage.setItem('searchEngine', importedData.searchEngine || 'google');
@@ -2534,6 +2586,7 @@
             setupThemeToggle();     // 3. 테마 토글 설정
             setupEventListeners();  // 4. [추가] 모든 설정 관련 이벤트 리스너 활성화
             setupSearchEngine();    // 5. [추가] 검색 엔진 설정
+            updateTimestamps();     // [신규] 저장된 타임스탬프 표시
             
             updateTime();           // 6. 최초 시간 표시
             setInterval(updateTime, 1000); // 7. 1초마다 시간 업데이트
