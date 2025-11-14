@@ -1732,36 +1732,36 @@
 
         // [신규] 삭제 확인 모달 표시
         function showConfirmModal(message, onConfirm) {
-            const confirmModal = document.getElementById('confirm-modal');
-            const messageEl = document.getElementById('confirm-modal-message');
-            const confirmBtn = document.getElementById('confirm-delete-btn');
-            const cancelBtn = document.getElementById('cancel-confirm-btn');
+            // 1. Get the original modal
+            const originalModal = document.getElementById('confirm-modal');
 
-            messageEl.innerHTML = message; // <br> 태그 등을 허용하기 위해 innerHTML 사용
-            confirmModal.classList.remove('modal-hidden');
+            // 2. Clone it to work with a fresh copy and remove all old listeners implicitly
+            const newModal = originalModal.cloneNode(true);
 
-            // 기존 이벤트 리스너 제거 (중복 방지)
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            // 3. Find elements within the NEW clone
+            const messageEl = newModal.querySelector('#confirm-modal-message');
+            const confirmBtn = newModal.querySelector('#confirm-delete-btn');
+            const cancelBtn = newModal.querySelector('#cancel-confirm-btn');
 
-            const newCancelBtn = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-
-            // 새 리스너 등록
-            newCancelBtn.addEventListener('click', hideConfirmModal);
-            newConfirmBtn.addEventListener('click', () => {
-                hideConfirmModal();
-                onConfirm(); // 확인 시 콜백 함수 실행
-            });
+            // 4. Configure the cloned elements
+            messageEl.innerHTML = message;
             
-            // 모달 외부 클릭 리스너 (기존 리스너가 있다면 제거)
-            const newModal = confirmModal.cloneNode(true);
-            confirmModal.parentNode.replaceChild(newModal, confirmModal);
-            newModal.addEventListener('click', (e) => {
-                 if (e.target === newModal) {
-                    hideConfirmModal();
-                 }
+            cancelBtn.addEventListener('click', hideConfirmModal);
+            confirmBtn.addEventListener('click', () => {
+                hideConfirmModal();
+                onConfirm();
             });
+            newModal.addEventListener('click', (e) => {
+                if (e.target === newModal) {
+                    hideConfirmModal();
+                }
+            });
+
+            // 5. Replace the old modal with the new one in the DOM
+            originalModal.parentNode.replaceChild(newModal, originalModal);
+
+            // 6. Show the new modal
+            newModal.classList.remove('modal-hidden');
         }
 
         function hideConfirmModal() {
