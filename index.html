@@ -2027,7 +2027,6 @@
             }
         }
 
-        // [신규] 자동 로그인 시도 함수 (API 준비 대기 포함)
         function trySilentLogin() {
             // API가 준비될 때까지 100ms마다 확인 (최대 10초)
             let attempts = 0;
@@ -2036,7 +2035,7 @@
             function checkApis() {
                 if (API_KEY === '' || CLIENT_ID === '') {
                     console.warn("API 키 또는 Client ID가 설정되지 않아 자동 로그인을 건너뜁니다.");
-                    updateSigninStatus(false);
+                    updateSigninStatus('logged_out'); // If API keys are missing, it's truly logged out
                     return;
                 }
 
@@ -2052,7 +2051,7 @@
                 } else {
                     // 타임아웃
                     console.warn("Silent login timed out waiting for GAPI/GSI.");
-                    updateSigninStatus(false); // API 로드 실패 시 로그아웃 상태로 표시
+                    updateSigninStatus('reauth_needed', "Google API 로드 실패 또는 타임아웃. 재인증 필요."); // Indicate re-auth needed
                 }
             }
             checkApis();
@@ -2064,7 +2063,7 @@
                 // 1. 로그인 성공 (수동 또는 자동)
                 gapiToken = tokenResponse;
                 gapi.client.setToken(gapiToken);
-                updateSigninStatus(true);
+                updateSigninStatus('logged_in');
                 
                 // [신규] 로그인 상태 localStorage에 저장
                 localStorage.setItem('gdrive_user_logged_in', 'true');
@@ -2082,10 +2081,13 @@
                     // 사용자의 요청대로 localStorage를 삭제하지 않음
                     // UI만 로그아웃 상태로 변경하여, 필요시 수동 로그인을 유도
                     console.log("Silent login failed. User needs to re-authenticate manually.");
-                    updateSigninStatus(false);
+                    updateSigninStatus('reauth_needed', "Google 계정 재인증 필요");
+                    gapiToken = null; // Clear token
+                    gapi.client.setToken(null);
                 } else {
                     // 2b. 수동 로그인 실패
                     showToast("로그인에 실패했습니다.", true);
+                    updateSigninStatus('logged_out'); // Explicit manual login failure
                 }
             }
             
@@ -2094,22 +2096,27 @@
         }
 
 
-        function updateSigninStatus(isSignedIn) {
+        function updateSigninStatus(status, statusMessage = '') { // status can be 'logged_in', 'logged_out', 'reauth_needed'
             const authorizeBtn = document.getElementById('gdrive-authorize-btn');
             const signoutContainer = document.getElementById('gdrive-signout-container');
             const gdriveActionsContainer = document.getElementById('gdrive-actions-container');
             const statusEl = document.getElementById('gdrive-status');
 
-            if (isSignedIn) {
+            if (status === 'logged_in') {
                 authorizeBtn.style.display = 'none';
                 signoutContainer.style.display = 'flex';
                 gdriveActionsContainer.style.display = 'grid';
-                statusEl.textContent = `Google 계정 로그인됨`;
-            } else {
+                statusEl.textContent = statusMessage || `Google 계정 로그인됨`;
+            } else if (status === 'logged_out') {
                 authorizeBtn.style.display = 'block';
                 signoutContainer.style.display = 'none';
                 gdriveActionsContainer.style.display = 'none';
-                statusEl.textContent = '로그인되지 않음';
+                statusEl.textContent = statusMessage || '로그인되지 않음';
+            } else if (status === 'reauth_needed') {
+                authorizeBtn.style.display = 'block'; // Show authorize button for re-authentication
+                signoutContainer.style.display = 'flex'; // Keep signout visible
+                gdriveActionsContainer.style.display = 'grid'; // Keep actions visible (but they will fail without token)
+                statusEl.textContent = statusMessage || 'Google 계정 재인증 필요';
             }
         }
         
@@ -2148,12 +2155,12 @@
                 google.accounts.oauth2.revoke(gapiToken.access_token, () => {
                     gapiToken = null;
                     gapi.client.setToken(null);
-                    updateSigninStatus(false);
+                    updateSigninStatus('logged_out');
                     showToast("로그아웃되었습니다.");
                 });
             } else {
                 // 토큰이 없더라도 (예: 자동 로그인 실패 상태) UI는 확실히 로그아웃 처리
-                updateSigninStatus(false);
+                updateSigninStatus('logged_out');
             }
         }
 
@@ -2673,6 +2680,14 @@
             loadZoom();             // 0. [추가] 확대/축소 레벨 먼저 로드
             loadFont();             // 0. [폰트 변경 추가] 폰트 로드 (영구 저장된 것만)
             loadData();             // 1. 데이터 로드 (localStorage 또는 기본값)
+
+            // Initial status check for Google Drive
+            if (localStorage.getItem('gdrive_user_logged_in') === 'true') {
+                updateSigninStatus('reauth_needed', 'Google 계정 확인 중...'); // Assume re-auth needed until silent login succeeds
+            } else {
+                updateSigninStatus('logged_out');
+            }
+
             renderCards();          // 2. 카드 렌더링 (여기서 카테고리 내비게이션도 렌더링됨)
             renderSummaryBoxes();   // [신규] 요약 박스 렌더링
             setupThemeToggle();     // 3. 테마 토글 설정
