@@ -1145,7 +1145,7 @@
             const blob = new Blob([dataStr], {type: "application/json"});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            const date = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '');
+            const date = getExportDateTimeString(); // [수정] 로컬 시간 기준의 헬퍼 함수 사용
             a.href = url;
             a.download = `my-dashboard-backup-${date}.json`;
             document.body.appendChild(a);
