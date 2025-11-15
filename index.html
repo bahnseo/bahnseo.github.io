@@ -423,7 +423,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">배경 이미지</label>
                 <div class="flex gap-2">
                     <input type="file" id="bg-image-file-input" accept="image/*" class="hidden">
-                    <button id="select-bg-image-btn" class="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-md shadow-md transition-colors">파일 선택... ※내부저장용량의 한계로 배경이미질르 되도록 1MB 이하로 사용 권장</button>
+                    <button id="select-bg-image-btn" class="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-md shadow-md transition-colors">파일 선택...   ※내부저장용량의 한계로 배경이미지를 1MB 이하로 사용 권장</button>
                     <button id="remove-bg-image-btn" class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md transition-colors">제거</button>
                 </div>
             </div>
@@ -1034,7 +1034,16 @@
                 dashboardTitle = "My Dashboard";
                 needsMigration = true; // 기본 데이터를 localStorage에 저장
             } else {
-                let data = JSON.parse(dataString);
+                let data;
+                try {
+                    data = JSON.parse(dataString);
+                    console.log('loadData: Parsed data from localStorage:', data);
+                    console.log('loadData: typeof data:', typeof data);
+                    console.log('loadData: data.categories:', data ? data.categories : 'N/A');
+                } catch (e) {
+                    console.error('loadData: Error parsing JSON from localStorage:', e);
+                    data = null; // Treat as corrupted data
+                }
                 
                 if (Array.isArray(data)) {
                     // 2. 기존 사용자 (구조 마이그레이션): 배열 -> 객체
@@ -1047,6 +1056,7 @@
                     dashboardTitle = data.title || "My Dashboard";
                 } else {
                     // 4. 데이터 손상: 기본값으로 리셋
+                    console.warn('loadData: Data in localStorage is corrupted or invalid. Resetting to default.');
                     siteData = [];
                     dashboardTitle = "My Dashboard";
                     needsMigration = true;
@@ -1119,33 +1129,55 @@
          */
         function getExportDateTimeString() {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
             
-            return `${year}-${month}-${day}_${hours}${minutes}${seconds}`;
+            // Intl.DateTimeFormat을 사용하여 사용자 로컬 시간대로 각 구성 요소를 가져옵니다.
+            // 이렇게 하면 브라우저 환경에 관계없이 항상 클라이언트의 로컬 시간이 반영됩니다.
+            const formatter = new Intl.DateTimeFormat('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false, // 24시간 형식
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone // 클라이언트의 현재 시간대 사용
+            });
+
+            const parts = formatter.formatToParts(now);
+            const year = parts.find(p => p.type === 'year').value;
+            const month = parts.find(p => p.type === 'month').value;
+            const day = parts.find(p => p.type === 'day').value;
+            const hour = parts.find(p => p.type === 'hour').value;
+            const minute = parts.find(p => p.type === 'minute').value;
+            const second = parts.find(p => p.type === 'second').value;
+            
+            return `${year}-${month}-${day}_${hour}${minute}${second}`;
         }
 
 
         // --- [추가] 3.4 -> 3.5. 내보내기/가져오기 함수 ---
         function exportData() {
             const settings = {
-                siteData: siteData,
+                title: dashboardTitle,
+                categories: siteData,
                 theme: localStorage.getItem('theme') || 'system',
                 font: localStorage.getItem('dashboardFont'),
                 viewMode: localStorage.getItem('dashboardViewMode'),
-                bgImageUrl: localStorage.getItem('dashboardBgImageUrl'),
                 titleColor: localStorage.getItem('dashboardTitleColor'),
                 searchEngine: localStorage.getItem('searchEngine') || 'google'
             };
+
+            const bgUrl = localStorage.getItem('dashboardBgImageUrl');
+            // 데이터 URL (Base64)은 너무 크므로 내보내기에서 제외합니다. 일반 http(s) URL만 포함합니다.
+            if (bgUrl && !bgUrl.startsWith('data:image')) {
+                settings.bgImageUrl = bgUrl;
+            }
+
             const dataStr = JSON.stringify(settings, null, 2);
             const blob = new Blob([dataStr], {type: "application/json"});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            const date = getExportDateTimeString(); // [수정] 로컬 시간 기준의 헬퍼 함수 사용
+            const date = getExportDateTimeString();
             a.href = url;
             a.download = `my-dashboard-backup-${date}.json`;
             document.body.appendChild(a);
@@ -1156,7 +1188,8 @@
         }
 
 
-        function importData(settings) {
+        // [수정] importData 함수를 파일 처리와 설정 적용 로직으로 분리
+        function _applyImportedSettings(settings) {
             // 데이터 유효성 검사
             if (!settings || typeof settings !== 'object') {
                 showToast('유효하지 않은 파일 형식입니다.', true);
@@ -1171,7 +1204,20 @@
             // 테마 설정 적용
             if (settings.theme) {
                 localStorage.setItem('theme', settings.theme);
-                applyTheme(settings.theme);
+                if (settings.theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                // 아이콘 업데이트 (setupThemeToggle의 updateIcon 로직을 직접 호출)
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                const lightIcon = document.getElementById('theme-icon-light');
+                const darkIcon = document.getElementById('theme-icon-dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    lightIcon.classList.remove('hidden'); darkIcon.classList.add('hidden');
+                } else {
+                    lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden');
+                }
             }
 
             // 폰트 설정 적용
@@ -1209,15 +1255,58 @@
             }
 
             // 사이트 데이터 적용
-            if (Array.isArray(settings.siteData)) {
-                siteData = settings.siteData;
+            let importedCategories = null;
+            let importedTitle = null;
+
+            if (Array.isArray(settings.categories)) {
+                importedCategories = settings.categories;
+                importedTitle = settings.title;
+            } else if (Array.isArray(settings.siteData)) { // 이전 버전 호환성
+                importedCategories = settings.siteData;
+                // 이전 버전에는 title이 없었으므로 현재 title 유지 또는 기본값 사용
+                importedTitle = settings.title || dashboardTitle; 
+            }
+
+            if (importedCategories) {
+                siteData = importedCategories;
+                dashboardTitle = importedTitle || "My Dashboard"; // 가져온 title이 없으면 기본값 사용
                 saveData(false); // UI 렌더링 없이 데이터만 저장
                 showToast('설정 및 데이터를 성공적으로 가져왔습니다. 페이지를 새로고침합니다.');
                 setTimeout(() => window.location.reload(), 1500);
             } else {
-                showToast('가져온 데이터에 사이트 정보(siteData)가 없습니다.', true);
+                showToast('가져온 데이터에 유효한 카테고리 정보가 없습니다.', true);
             }
             updateLocalStorageUsageDisplay(); // [신규] 로컬 스토리지 사용량 업데이트
+        }
+
+        // [신규] 파일 입력 이벤트를 처리하는 importData 함수
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    _applyImportedSettings(importedData); // 파싱된 데이터를 실제 설정 적용 함수에 전달
+                } catch (error) {
+                    console.error("Import failed:", error);
+                    showToast("파일을 읽는 중 오류가 발생했습니다.", true);
+                } finally {
+                    // 다음에도 동일한 파일을 가져올 수 있도록 입력값 초기화
+                    e.target.value = null;
+                }
+            };
+            
+            reader.onerror = function() {
+                showToast("파일을 읽는 데 실패했습니다.", true);
+                e.target.value = null;
+            };
+
+            reader.readAsText(file);
         }
 
         // --- [수정] 3.5 -> 3.6. UI 피드백 함수 ---
