@@ -454,7 +454,7 @@
 
             <!-- [신규] 버전 정보 -->
             <div class="text-center text-xs text-white dark:text-white mt-4">
-                v1.4.6 by Bahn Kim.
+                v1.4.7 by Bahn Kim.
             </div>
         </div>
     </div>
@@ -1156,7 +1156,7 @@
 
 
         // --- [추가] 3.4 -> 3.5. 내보내기/가져오기 함수 ---
-        function exportData() {
+        async function exportData() {
             const settings = {
                 title: dashboardTitle,
                 categories: siteData,
@@ -1174,17 +1174,43 @@
             }
 
             const dataStr = JSON.stringify(settings, null, 2);
-            const blob = new Blob([dataStr], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+            const blob = new Blob([dataStr], { type: "application/json" });
             const date = getExportDateTimeString();
-            a.href = url;
-            a.download = `my-dashboard-backup-${date}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('설정 및 데이터가 JSON 파일로 내보내졌습니다.');
+            const fileName = `my-dashboard-backup-${date}.json`;
+
+            // File System Access API 사용 (모던 브라우저)
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: fileName,
+                        types: [{
+                            description: 'JSON Files',
+                            accept: { 'application/json': ['.json'] },
+                        }],
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    showToast('설정 및 데이터가 파일로 저장되었습니다.');
+                } catch (err) {
+                    // 사용자가 파일 선택을 취소한 경우(AbortError)는 오류가 아니므로 무시합니다.
+                    if (err.name !== 'AbortError') {
+                        console.error('File save error:', err);
+                        showToast('파일을 저장하는 중 오류가 발생했습니다.', true);
+                    }
+                }
+            } else {
+                // Fallback for older browsers
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('설정 및 데이터가 JSON 파일로 내보내졌습니다.');
+            }
         }
 
 
