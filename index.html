@@ -8,7 +8,7 @@
     <!-- [신규] 브라우저 탭 아이콘 (Favicon) 추가 -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="32x32" href="Icon_32x32-WWW.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="Icon-WWW-blue.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <!-- / [수정] PNG 파일 예시로 변경 -->
@@ -311,7 +311,7 @@
                 </div>
 
                 <!-- [수정] 화면 확대/축소 버튼 (헤더에 유지) -->
-                <div class="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                <div class="hidden flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-200 dark:bg-gray-700 flex-shrink-0">
                     <button id="zoom-out-btn" class="p-1 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" title="화면 축소">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                           <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8zm3 3a1 1 0 011-1h4a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
@@ -327,19 +327,7 @@
                     </button>
                 </div>
 
-                <!-- [신규] 뷰 모드 토글 버튼 -->
-                <div id="view-mode-toggle" class="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-200 dark:bg-gray-700 flex-shrink-0 ml-2">
-                    <button id="card-view-btn" class="p-1 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600" title="카드 뷰">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                    </button>
-                    <button id="list-view-btn" class="p-1 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600" title="리스트 뷰">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
+                <!-- [이동됨] 뷰 모드 토글 버튼은 플로팅 액션 버튼으로 이동 -->
 
                 <!-- [수정] 설정/테마 버튼은 아래 플로팅 컨테이너로 이동하고, 이 자리에는 공간만 남깁니다. -->
                 <div class="hidden md:flex items-center gap-2 sm:gap-4">
@@ -362,19 +350,6 @@
                             </div>
                         </div>
                     </div>
-
-                                        <!-- [신규] 1.5. 카테고리 내비게이션 (줄바꿈 방식, 헤더 아래로 이동) -->
-                                                                    <nav id="category-nav-wrapper" class="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 rounded-lg mb-8 md:mb-12 px-4 sm:px-0">            <!-- [수정] flex-wrap을 추가하고 overflow-x-auto를 제거하여 줄바꿈을 허용합니다. -->
-                                                                        <div id="category-nav" class="flex flex-wrap gap-2 p-3">
-                                                                            <!-- 카테고리 탭 목록이 여기에 삽입됩니다. -->
-                                                                        </div>
-                                                                            </nav>
-                                                                    
-                                                                            <!-- 2. 메인 콘텐츠 - 카드 그리드 -->        <main id="main-content">
-            <!-- JavaScript로 카테고리와 카드가 여기에 삽입됩니다. -->
-        </main>
-
-
 
         <!-- [수정] 설정 모드 버튼 영역 (Tailwind 'flex' 클래스 제거) -->
         <div class="edit-controls mt-8 px-4 sm:px-0">
@@ -457,6 +432,17 @@
                 v1.4.7 by Bahn Kim.
             </div>
         </div>
+
+                                        <!-- [신규] 1.5. 카테고리 내비게이션 (줄바꿈 방식, 헤더 아래로 이동) -->
+                                                                    <nav id="category-nav-wrapper" class="w-full bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 rounded-lg mb-8 md:mb-12 px-4 sm:px-0">            <!-- [수정] flex-wrap을 추가하고 overflow-x-auto를 제거하여 줄바꿈을 허용합니다. -->
+                                                                        <div id="category-nav" class="flex flex-wrap gap-2 p-3">
+                                                                            <!-- 카테고리 탭 목록이 여기에 삽입됩니다. -->
+                                                                        </div>
+                                                                            </nav>
+                                                                    
+                                                                            <!-- 2. 메인 콘텐츠 - 카드 그리드 -->        <main id="main-content">
+            <!-- JavaScript로 카테고리와 카드가 여기에 삽입됩니다. -->
+        </main>
     </div>
 
     <!-- [신규] 플로팅 액션 버튼 컨테이너 -->
@@ -473,6 +459,18 @@
         <button id="scroll-to-bottom-btn" class="p-1.5 rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white shadow-xl transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+
+        <!-- [신규/이동] 뷰 모드 토글 버튼 -->
+        <button id="card-view-btn" class="p-1.5 rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white shadow-xl transition-all" title="카드 뷰">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+        </button>
+        <button id="list-view-btn" class="p-1.5 rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white shadow-xl transition-all" title="리스트 뷰">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
             </svg>
         </button>
 
@@ -634,6 +632,11 @@
                             <div class="mb-4">
                                 <label for="event-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름 (제목)</label>
                                 <input type="text" id="event-name" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <!-- [신규] 내용 입력창 추가 -->
+                            <div class="mb-4">
+                                <label for="event-content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">내용</label>
+                                <textarea id="event-content" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
                             </div>
             
                                                             <div class="mb-4">
@@ -845,12 +848,18 @@
             const listBtn = document.getElementById('list-view-btn');
             if (!cardBtn || !listBtn) return;
 
+            // Reset styles first
+            cardBtn.classList.remove('bg-blue-600', 'dark:bg-blue-500');
+            listBtn.classList.remove('bg-blue-600', 'dark:bg-blue-500');
+            cardBtn.classList.add('bg-gray-400', 'dark:bg-gray-600');
+            listBtn.classList.add('bg-gray-400', 'dark:bg-gray-600');
+
             if (currentViewMode === 'list') {
-                listBtn.classList.add('bg-gray-300', 'dark:bg-gray-500');
-                cardBtn.classList.remove('bg-gray-300', 'dark:bg-gray-500');
-            } else {
-                cardBtn.classList.add('bg-gray-300', 'dark:bg-gray-500');
-                listBtn.classList.remove('bg-gray-300', 'dark:bg-gray-500');
+                listBtn.classList.remove('bg-gray-400', 'dark:bg-gray-600');
+                listBtn.classList.add('bg-blue-600', 'dark:bg-blue-500');
+            } else { // card
+                cardBtn.classList.remove('bg-gray-400', 'dark:bg-gray-600');
+                cardBtn.classList.add('bg-blue-600', 'dark:bg-blue-500');
             }
         }
 
@@ -965,44 +974,19 @@
          */
 
         // --- [수정] 3.2. 전역 변수 및 상수 ---
-        let siteData = []; // [수정] 초기값은 빈 배열, loadData에서 채워짐
-        let dashboardTitle = "My Dashboard"; // [추가] 대시보드 제목
-        let editMode = false; // 설정 모드 상태
-        
-        // [추가] 드래그 앤 드롭 인스턴스
+        let siteData = [];
+        let dashboardTitle = "My Dashboard";
+        let editMode = false;
         let categorySortable = null;
         let siteSortables = [];
 
-        const mainContent = document.getElementById('main-content');
-        const currentTimeEl = document.getElementById('currentTime');
-        // [수정] 테마 토글 버튼 참조는 플로팅 영역의 버튼을 사용합니다.
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const lightIcon = document.getElementById('theme-icon-light');
-        const darkIcon = document.getElementById('theme-icon-dark');
-        // [추가] 카테고리 내비게이션
-        const categoryNav = document.getElementById('category-nav'); 
+        // --- DOM 요소 참조 (선언만) ---
+        let mainContent, currentTimeEl, themeToggleBtn, lightIcon, darkIcon, categoryNav,
+            settingsToggleBtn, settingsIcon, closeIcon, addCategoryBtn, dashboardTitleEl,
+            toastEl, siteModal, siteForm, categoryModal, categoryForm, titleModal,
+            titleForm, eventModal, dropboxKeyModal, dropboxKeyForm, searchForm,
+            searchInput, searchEngineRadios;
 
-        // [수정] 설정 모드 요소 참조는 플로팅 영역의 버튼을 사용합니다.
-        const settingsToggleBtn = document.getElementById('settings-toggle-btn');
-        const settingsIcon = document.getElementById('settings-icon');
-        const closeIcon = document.getElementById('close-icon');
-        const addCategoryBtn = document.getElementById('add-category-btn');
-        const dashboardTitleEl = document.getElementById('dashboard-title'); // [추가]
-
-        // [추가] 모달 요소
-        const siteModal = document.getElementById('site-modal');
-        const siteForm = document.getElementById('site-form');
-        const categoryModal = document.getElementById('category-modal');
-        const categoryForm = document.getElementById('category-form');
-        const titleModal = document.getElementById('title-modal'); // [추가]
-        const titleForm = document.getElementById('title-form'); // [추가]
-        const eventModal = document.getElementById('event-modal'); // [신규]
-        const toastEl = document.getElementById('toast');
-
-        // [추가] 검색 폼 요소
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const searchEngineRadios = document.querySelectorAll('input[name="search-engine"]');
 
 
         // --- [수정] 3.3 -> 3.4. 데이터 관리 함수 (localStorage) ---
@@ -1215,7 +1199,7 @@
 
 
         // [수정] importData 함수를 파일 처리와 설정 적용 로직으로 분리
-        function _applyImportedSettings(settings) {
+        function _applyImportedSettings(settings, isDropboxImport = false) {
             // 데이터 유효성 검사
             if (!settings || typeof settings !== 'object') {
                 showToast('유효하지 않은 파일 형식입니다.', true);
@@ -1260,12 +1244,16 @@
                 setViewMode(settings.viewMode);
             }
 
-            // [신규] 배경 이미지 URL 적용
-            if (settings.bgImageUrl) {
-                applyBackgroundImage(settings.bgImageUrl);
-            } else {
-                removeBackgroundImage();
+            // [신규] 배경 이미지 URL 적용 (가져온 파일에 해당 설정이 있을 경우에만 적용)
+            if (settings.hasOwnProperty('bgImageUrl')) {
+                if (settings.bgImageUrl) {
+                    applyBackgroundImage(settings.bgImageUrl);
+                } else {
+                    // bgImageUrl 키가 있지만 값이 없는 경우 (예: null) 배경을 제거합니다.
+                    removeBackgroundImage();
+                }
             }
+            // bgImageUrl 키가 없으면 현재 배경을 그대로 유지합니다.
 
             // [신규] 제목 색상 적용
             if (settings.titleColor) {
@@ -1297,6 +1285,11 @@
                 siteData = importedCategories;
                 dashboardTitle = importedTitle || "My Dashboard"; // 가져온 title이 없으면 기본값 사용
                 saveData(false); // UI 렌더링 없이 데이터만 저장
+                
+                if (isDropboxImport) {
+                    window.electronAPI.notifyDropboxImportComplete();
+                }
+
                 showToast('설정 및 데이터를 성공적으로 가져왔습니다. 페이지를 새로고침합니다.');
                 setTimeout(() => window.location.reload(), 1500);
             } else {
@@ -1662,10 +1655,10 @@
                 const isLinksCategory = category.type === 'links' || category.isPopularCategory;
                 const grid = document.createElement('div');
 
-                // [수정] 리스트 뷰일 경우 flex-wrap으로 변경
-                if (currentViewMode === 'list' && isLinksCategory) {
+                // [수정] 뷰 모드에 따라 그리드 클래스 변경
+                if (currentViewMode === 'list') {
                     grid.className = 'card-grid flex flex-row flex-wrap gap-x-6 gap-y-2 items-center';
-                } else {
+                } else { // 카드 뷰
                     grid.className = 'card-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6';
                 }
                 
@@ -1785,53 +1778,122 @@
                         grid.appendChild(card);
 
                     } else if (categoryType === 'events') {
-                        // --- 이벤트 카드는 항상 카드 뷰로 렌더링 ---
-                        const card = document.createElement('div');
-                        card.className = `site-card relative block p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md`;
-                        if (editMode) {
-                            card.classList.add('cursor-move');
-                        }
-                        let eventInfoHtml = '';
-                        if (site.targetDate) {
-                            const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
-                            const targetDate = new Date(site.targetDate);
-                            if (site.type === 'dday') {
-                                const targetDateMidnight = new Date(new Date(site.targetDate).setHours(0, 0, 0, 0));
-                                const diffTime = targetDateMidnight.getTime() - todayMidnight.getTime();
-                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                                let ddayText = `D-${diffDays}`;
-                                if (diffDays === 0) ddayText = 'D-Day';
-                                else if (diffDays < 0) ddayText = `D+${Math.abs(diffDays)}`;
-                                eventInfoHtml = `<h3 class="text-xl font-bold text-red-500">${ddayText}</h3>`;
-                            } else if (site.type === 'alarm' && !isNaN(targetDate.getTime())) {
-                                const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-                                switch (site.recurrence) {
-                                    case 'daily': eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매일 ${time}</p>`; break;
-                                    case 'weekly': const day = ['일', '월', '화', '수', '목', '금', '토'][targetDate.getDay()]; eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매주 ${day}요일 ${time}</p>`; break;
-                                    case 'monthly': const date = targetDate.getDate(); eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매월 ${date}일 ${time}</p>`; break;
-                                    case 'yearly': const month = targetDate.getMonth() + 1; const dayOfMonth = targetDate.getDate(); eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매년 ${month}월 ${dayOfMonth}일 ${time}</p>`; break;
-                                    default: eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">${targetDate.toLocaleString('ko-KR')}</p>`; break;
+                        if (currentViewMode === 'list') {
+                            // --- [신규] 이벤트 리스트 뷰 렌더링 ---
+                            const item = document.createElement('div');
+                            // [수정] w-full을 제거하여 내용에 맞게 너비가 조절되도록 함
+                            item.className = `site-list-item relative flex items-center justify-between p-1 bg-white dark:bg-gray-800 rounded-md`;
+                            if (editMode) {
+                                item.classList.add('cursor-move');
+                            }
+                            // [신규] 이벤트 리스트 아이템 클릭 시 모달 열기
+                            item.addEventListener('click', (e) => {
+                                // 수정/삭제 버튼 클릭 시에는 모달이 열리지 않도록 방지
+                                if (!e.target.closest('.edit-card-controls')) {
+                                    showEventModal(realCategoryIndex, siteIndex);
+                                }
+                            });
+
+                            let eventInfoHtml = '';
+                            if (site.targetDate) {
+                                const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
+                                const targetDate = new Date(site.targetDate);
+                                if (site.type === 'dday') {
+                                    const targetDateMidnight = new Date(new Date(site.targetDate).setHours(0, 0, 0, 0));
+                                    const diffTime = targetDateMidnight.getTime() - todayMidnight.getTime();
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    let ddayText = `D-${diffDays}`;
+                                    if (diffDays === 0) ddayText = 'D-Day';
+                                    else if (diffDays < 0) ddayText = `D+${Math.abs(diffDays)}`;
+                                    eventInfoHtml = `<span class="font-semibold text-red-500">${ddayText}</span>`;
+                                } else if (site.type === 'alarm' && !isNaN(targetDate.getTime())) {
+                                    const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                                    let recurrenceText = '';
+                                    switch (site.recurrence) {
+                                        case 'daily': recurrenceText = `매일 ${time}`; break;
+                                        case 'weekly': const day = ['일', '월', '화', '수', '목', '금', '토'][targetDate.getDay()]; recurrenceText = `매주 ${day}요일`; break;
+                                        case 'monthly': const date = targetDate.getDate(); recurrenceText = `매월 ${date}일`; break;
+                                        case 'yearly': const month = targetDate.getMonth() + 1; const dayOfMonth = targetDate.getDate(); recurrenceText = `매년 ${month}/${dayOfMonth}`; break;
+                                        default: recurrenceText = targetDate.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); break;
+                                    }
+                                    eventInfoHtml = `<span class="font-medium text-gray-600 dark:text-gray-400">${recurrenceText}</span>`;
                                 }
                             }
-                        }
-                        card.innerHTML = `
-                            <div class="edit-card-controls absolute top-2 right-2 space-x-1">
-                                <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
-                                </button>
-                                <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                                </button>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <span class="flex-shrink-0 text-3xl w-10 h-10 flex items-center justify-center">${site.icon || '📌'}</span>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${site.name}</h3>
-                                    ${eventInfoHtml}
+
+                            item.innerHTML = `
+                                <div class="flex items-center overflow-hidden">
+                                    <span class="flex-shrink-0 text-lg w-5 h-5 flex items-center justify-center">${site.icon || '📌'}</span>
+                                    <h3 class="text-sm font-medium text-gray-800 dark:text-gray-100 ml-1.5 truncate">${site.name}</h3>
                                 </div>
-                            </div>
-                        `;
-                        grid.appendChild(card);
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <div class="text-sm text-right">${eventInfoHtml}</div>
+                                    <div class="edit-card-controls space-x-0.5">
+                                        <button class="edit-site-btn p-0.5 bg-white dark:bg-gray-700 rounded-full shadow text-blue-600 hover:text-blue-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                                        </button>
+                                        <button class="delete-site-btn p-0.5 bg-white dark:bg-gray-700 rounded-full shadow text-red-600 hover:text-red-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(item);
+                        } else { // card view
+                            // --- 이벤트 카드는 카드 뷰로 렌더링 ---
+                            const card = document.createElement('div');
+                            card.className = `site-card relative block p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md`;
+                            if (editMode) {
+                                card.classList.add('cursor-move');
+                            }
+                            // [신규] 이벤트 카드 클릭 시 모달 열기
+                            card.addEventListener('click', (e) => {
+                                // 수정/삭제 버튼 클릭 시에는 모달이 열리지 않도록 방지
+                                if (!e.target.closest('.edit-card-controls')) {
+                                    showEventModal(realCategoryIndex, siteIndex);
+                                }
+                            });
+                            let eventInfoHtml = '';
+                            if (site.targetDate) {
+                                const todayMidnight = new Date(new Date().setHours(0, 0, 0, 0));
+                                const targetDate = new Date(site.targetDate);
+                                if (site.type === 'dday') {
+                                    const targetDateMidnight = new Date(new Date(site.targetDate).setHours(0, 0, 0, 0));
+                                    const diffTime = targetDateMidnight.getTime() - todayMidnight.getTime();
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    let ddayText = `D-${diffDays}`;
+                                    if (diffDays === 0) ddayText = 'D-Day';
+                                    else if (diffDays < 0) ddayText = `D+${Math.abs(diffDays)}`;
+                                    eventInfoHtml = `<h3 class="text-xl font-bold text-red-500">${ddayText}</h3>`;
+                                } else if (site.type === 'alarm' && !isNaN(targetDate.getTime())) {
+                                    const time = targetDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                                    switch (site.recurrence) {
+                                        case 'daily': eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매일 ${time}</p>`; break;
+                                        case 'weekly': const day = ['일', '월', '화', '수', '목', '금', '토'][targetDate.getDay()]; eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매주 ${day}요일 ${time}</p>`; break;
+                                        case 'monthly': const date = targetDate.getDate(); eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매월 ${date}일 ${time}</p>`; break;
+                                        case 'yearly': const month = targetDate.getMonth() + 1; const dayOfMonth = targetDate.getDate(); eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">매년 ${month}월 ${dayOfMonth}일 ${time}</p>`; break;
+                                        default: eventInfoHtml = `<p class="text-sm font-medium text-gray-600 dark:text-gray-400">${targetDate.toLocaleString('ko-KR')}</p>`; break;
+                                    }
+                                }
+                            }
+                            card.innerHTML = `
+                                <div class="edit-card-controls absolute top-2 right-2 space-x-1">
+                                    <button class="edit-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-blue-600 hover:text-blue-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 수정">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>
+                                    </button>
+                                    <button class="delete-site-btn p-1.5 bg-white dark:bg-gray-700 rounded-full shadow-md text-red-600 hover:text-red-800" data-category-index="${realCategoryIndex}" data-site-index="${siteIndex}" title="이벤트 삭제">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="flex-shrink-0 text-3xl w-10 h-10 flex items-center justify-center">${site.icon || '📌'}</span>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${site.name}</h3>
+                                        ${eventInfoHtml}
+                                    </div>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        }
                     }
                 });
 
@@ -1946,6 +2008,7 @@
 
             const ddayFields = document.getElementById('dday-fields');
             const alarmFields = document.getElementById('alarm-fields');
+            const eventContentInput = document.getElementById('event-content'); // [신규] 내용 입력창 참조
 
             if (eventIndex !== null) {
                 // 수정 모드
@@ -1955,6 +2018,7 @@
                 
                 document.getElementById('event-type').value = event.type;
                 document.getElementById('event-name').value = event.name;
+                eventContentInput.value = event.content || ''; // [신규] 내용 필드 채우기
                 document.getElementById('event-icon').value = event.icon;
 
                 if (event.type === 'dday') {
@@ -1973,12 +2037,16 @@
                 document.getElementById('event-modal-title').textContent = "새 이벤트 추가";
                 document.getElementById('event-index').value = '';
                 document.getElementById('event-recurrence').value = 'none'; // [신규] 기본값
+                eventContentInput.value = ''; // [신규]새 이벤트일 경우 내용 필드 초기화
                 // 기본으로 D-Day 필드 표시
                 ddayFields.classList.remove('hidden');
                 alarmFields.classList.add('hidden');
             }
             
             eventModal.classList.remove('modal-hidden');
+            // [신규] 내용 입력창의 높이 조절
+            eventContentInput.style.height = '';
+            eventContentInput.style.height = eventContentInput.scrollHeight + 'px';
         }
 
         // [수정] 누락되었던 showCategoryModal 함수 추가
@@ -2045,12 +2113,23 @@
             document.getElementById('confirm-modal').classList.add('modal-hidden');
         }
 
+        function showDropboxKeyModal() {
+            dropboxKeyForm.reset();
+            dropboxKeyModal.classList.remove('modal-hidden');
+            document.getElementById('dropbox-key-input').focus();
+        }
+
+        function hideDropboxKeyModal() {
+            dropboxKeyModal.classList.add('modal-hidden');
+        }
+
         function hideModals() {
             siteModal.classList.add('modal-hidden');
             categoryModal.classList.add('modal-hidden');
             titleModal.classList.add('modal-hidden');
             eventModal.classList.add('modal-hidden'); // [신규]
             hideConfirmModal(); // [신규] 삭제 확인 모달도 함께 닫기
+            hideDropboxKeyModal(); // [신규] Dropbox 키 모달도 함께 닫기
         }
 
         // --- [수정] 3.13 -> 3.14. 설정 모드 토글 ---
@@ -2623,6 +2702,7 @@
             document.getElementById('cancel-category-btn').addEventListener('click', hideModals);
             document.getElementById('cancel-title-btn').addEventListener('click', hideModals); // [추가]
             document.getElementById('cancel-event-btn').addEventListener('click', hideModals); // [신규]
+            document.getElementById('cancel-dropbox-key-btn').addEventListener('click', hideModals); // [신규]
             
             // [신규] 이벤트 모달 타입 변경 시 필드 토글
             document.getElementById('event-type').addEventListener('change', (e) => {
@@ -2746,6 +2826,7 @@
                 const eventData = {
                     type: eventType,
                     name: document.getElementById('event-name').value,
+                    content: document.getElementById('event-content').value, // [신규] 내용 필드 추가
                     icon: document.getElementById('event-icon').value,
                     targetDate: eventType === 'dday' 
                         ? document.getElementById('event-date').value 
@@ -2765,6 +2846,19 @@
                 }
                 saveData();
                 hideModals();
+            });
+
+            // [신규] Dropbox 키 폼 제출
+            dropboxKeyForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const keyInput = document.getElementById('dropbox-key-input');
+                const key = keyInput.value.trim();
+                if (key) {
+                    window.electronAPI.saveDropboxKey(key);
+                    hideModals();
+                } else {
+                    showToast('Dropbox 앱 키를 입력해주세요.', true);
+                }
             });
 
             // --- [추가] 내보내기/가져오기 리스너 ---
@@ -2791,29 +2885,261 @@
 
         // --- [수정] 3.16 -> 3.17. 스크립트 실행 (DOM 로드 완료 후) ---
                         document.addEventListener('DOMContentLoaded', () => {
-                            loadZoom();             // 0. [추가] 확대/축소 레벨 먼저 로드
-            loadFont(); // [수정] 저장된 폰트 설정 불러오기
-            loadViewMode(); // [신규] 저장된 뷰 모드 불러오기
-            loadBackgroundImage(); // [신규] 저장된 배경 이미지 불러오기
-            loadTitleColor(); // [신규] 저장된 제목 색상 불러오기
+            // --- DOM 요소 참조 (할당) ---
+            mainContent = document.getElementById('main-content');
+            currentTimeEl = document.getElementById('currentTime');
+            themeToggleBtn = document.getElementById('theme-toggle');
+            lightIcon = document.getElementById('theme-icon-light');
+            darkIcon = document.getElementById('theme-icon-dark');
+            categoryNav = document.getElementById('category-nav');
+            settingsToggleBtn = document.getElementById('settings-toggle-btn');
+            settingsIcon = document.getElementById('settings-icon');
+            closeIcon = document.getElementById('close-icon');
+            addCategoryBtn = document.getElementById('add-category-btn');
+            dashboardTitleEl = document.getElementById('dashboard-title');
+            toastEl = document.getElementById('toast');
+            siteModal = document.getElementById('site-modal');
+            siteForm = document.getElementById('site-form');
+            categoryModal = document.getElementById('category-modal');
+            categoryForm = document.getElementById('category-form');
+            titleModal = document.getElementById('title-modal');
+            titleForm = document.getElementById('title-form');
+            eventModal = document.getElementById('event-modal');
+            dropboxKeyModal = document.getElementById('dropbox-key-modal');
+            dropboxKeyForm = document.getElementById('dropbox-key-form');
+            searchForm = document.getElementById('search-form');
+            searchInput = document.getElementById('search-input');
+            searchEngineRadios = document.querySelectorAll('input[name="search-engine"]');
 
-            // 데이터 로드 및 렌더링
+            // --- [신규] 전역 단축키 설정 ---
+            const shortcutModal = document.getElementById('shortcut-modal');
+            const shortcutInput = document.getElementById('shortcut-input');
+            const saveShortcutBtn = document.getElementById('save-shortcut-btn');
+            const clearShortcutBtn = document.getElementById('clear-shortcut-btn');
+            const cancelShortcutBtn = document.getElementById('cancel-shortcut-btn');
+            let currentShortcut = '';
+
+            function showShortcutModal() {
+                // main 프로세스에 현재 저장된 단축키를 요청합니다.
+                if (window.electronAPI) window.electronAPI.getGlobalShortcut();
+                shortcutModal.classList.remove('modal-hidden');
+                shortcutInput.focus();
+            }
+
+            function hideShortcutModal() {
+                shortcutModal.classList.add('modal-hidden');
+                shortcutInput.value = ''; // 입력 필드 초기화
+                currentShortcut = '';
+            }
+
+            shortcutInput.addEventListener('keydown', (e) => {
+                e.preventDefault();
+                const parts = [];
+                if (e.ctrlKey) parts.push('Control');
+                if (e.shiftKey) parts.push('Shift');
+                if (e.altKey) parts.push('Alt');
+
+                // Modifier keys (Ctrl, Shift, Alt) themselves are not added as the main key
+                const key = e.key.toUpperCase();
+                if (key !== 'CONTROL' && key !== 'SHIFT' && key !== 'ALT') {
+                    // Electron's accelerator format uses 'Space' for the spacebar
+                    if (key === ' ') {
+                        parts.push('Space');
+                    } else {
+                        parts.push(key);
+                    }
+                }
+                
+                currentShortcut = parts.join('+');
+                shortcutInput.value = currentShortcut;
+            });
+
+            saveShortcutBtn.addEventListener('click', () => {
+                if (currentShortcut) {
+                    if (window.electronAPI) window.electronAPI.setGlobalShortcut(currentShortcut);
+                    showToast(`전역 단축키가 '${currentShortcut}' (으)로 저장되었습니다.`);
+                    hideShortcutModal();
+                } else {
+                    showToast('먼저 단축키를 입력해주세요.', true);
+                }
+            });
+
+            clearShortcutBtn.addEventListener('click', () => {
+                if (window.electronAPI) window.electronAPI.clearGlobalShortcut();
+                showToast('전역 단축키가 삭제되었습니다.');
+                hideShortcutModal();
+            });
+
+            cancelShortcutBtn.addEventListener('click', hideShortcutModal);
+            shortcutModal.addEventListener('click', (e) => {
+                if (e.target === shortcutModal) hideShortcutModal();
+            });
+            
+            if (window.electronAPI) {
+                // Main process로부터 메뉴 클릭 이벤트를 받습니다.
+                window.electronAPI.onTrigger('open-shortcut-modal', showShortcutModal);
+
+                // Main process로부터 현재 저장된 단축키를 받습니다.
+                window.electronAPI.onReceiveGlobalShortcut((shortcut) => {
+                    shortcutInput.value = shortcut || '설정된 단축키 없음';
+                    currentShortcut = shortcut;
+                });
+            }
+
+            loadZoom();
+            loadFont();
+            loadViewMode();
+            loadBackgroundImage();
+            loadTitleColor();
             loadData();        
-                    renderCards();          // 2. 카드 렌더링 (여기서 카테고리 내비게이션도 렌더링됨)
-                    renderSummaryBoxes();   // [신규] 요약 박스 렌더링
-                    setupThemeToggle();     // 3. 테마 토글 설정
-                    setupEventListeners();  // 4. [추가] 모든 설정 관련 이벤트 리스너 활성화
-                    setupSearchEngine();    // 5. [추가] 검색 엔진 설정
-                    
-                    updateTime();           // 6. 최초 시간 표시
-                    setInterval(updateTime, 1000); // 7. 1초마다 시간 업데이트
-        
-                                // [신규] 브라우저 알림 기능 초기화
-                                // 페이지 로드 후 잠시 뒤에 권한을 요청하여 사용자 경험 개선
-                                // setTimeout(requestNotificationPermission, 3000); 
-                                // 1분마다 알림 확인할 스케줄러 실행
-                                setInterval(checkAndDispatchNotifications, 60000); 
-                            });    </script>
+            renderCards();
+            renderSummaryBoxes();
+            setupThemeToggle();
+            setupEventListeners();
+            setupSearchEngine();
+            
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            setInterval(checkAndDispatchNotifications, 60000);
+
+            // --- Electron 메뉴와의 모든 통신을 위한 통합 리스너 ---
+            if (window.electronAPI) {
+                // 모든 설정 메뉴 항목에 공통으로 적용될 UI 내비게이션 핸들러
+                function handleSettingsNavigation(action) {
+                    if (!editMode) {
+                        document.getElementById('settings-toggle-btn').click();
+                    }
+                    requestAnimationFrame(() => {
+                        action();
+                    });
+                }
+
+                // '설정 -> 내보내기' 메뉴 클릭 시
+                window.electronAPI.onTrigger('trigger-export', () => {
+                    handleSettingsNavigation(() => {
+                        const exportButton = document.getElementById('export-btn');
+                        exportButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        exportButton.focus();
+                        exportData(); // 직접 내보내기 실행
+                    });
+                });
+
+                // '설정 -> 가져오기' 메뉴 클릭 시
+                window.electronAPI.onTrigger('trigger-import', () => {
+                    handleSettingsNavigation(() => {
+                        const importButton = document.getElementById('import-btn');
+                        importButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        importButton.focus();
+                        document.getElementById('import-file-input').click(); // 파일 선택창 열기
+                    });
+                });
+
+                // '설정 -> 폰트 변경' 메뉴 클릭 시
+                window.electronAPI.onTrigger('trigger-font-settings', () => {
+                    handleSettingsNavigation(() => {
+                        const fontSelector = document.getElementById('font-selector');
+                        fontSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        fontSelector.focus();
+                    });
+                });
+
+                // '설정 -> 배경화면 설정' 메뉴 클릭 시
+                window.electronAPI.onTrigger('trigger-bg-settings', () => {
+                    handleSettingsNavigation(() => {
+                        const bgButton = document.getElementById('select-bg-image-btn');
+                        bgButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        bgButton.focus();
+                    });
+                });
+
+                // --- Dropbox 연동 ---
+                // 메뉴에서 'Dropbox로 내보내기'를 클릭했을 때
+                window.electronAPI.onTrigger('dropbox-upload', () => {
+                    const settings = {
+                        title: dashboardTitle,
+                        categories: siteData,
+                        theme: localStorage.getItem('theme') || 'system',
+                        font: localStorage.getItem('dashboardFont'),
+                        viewMode: localStorage.getItem('dashboardViewMode'),
+                        titleColor: localStorage.getItem('dashboardTitleColor'),
+                        searchEngine: localStorage.getItem('searchEngine') || 'google'
+                    };
+                    const dataStr = JSON.stringify(settings, null, 2);
+                    window.electronAPI.uploadFileToDropbox(dataStr);
+                });
+
+                // Dropbox에서 파일 다운로드가 완료되었을 때
+                window.electronAPI.onDropboxFileDownloaded((fileContent) => {
+                    if (fileContent) {
+                        try {
+                            const importedData = JSON.parse(fileContent);
+                            _applyImportedSettings(importedData, true);
+                        } catch (error) {
+                            console.error("Dropbox import failed:", error);
+                            showToast("Dropbox에서 가져온 파일을 처리하는 중 오류가 발생했습니다.", true);
+                        }
+                    }
+                });
+
+                // Dropbox 인증 성공/실패 시 토스트 메시지 표시
+                window.electronAPI.onTrigger('dropbox-auth-success', () => {
+                    // main.js에서 이미 다이얼로그를 보여주므로 여기서는 생략
+                });
+                window.electronAPI.onTrigger('dropbox-auth-error', () => {
+                    // main.js에서 이미 다이얼로그를 보여줌
+                });
+
+                // [신규] Dropbox 앱 키 관련 IPC 리스너
+                window.electronAPI.onTrigger('request-dropbox-key', () => {
+                    showToast('Dropbox 앱 키를 먼저 설정해야 합니다.', true);
+                    showDropboxKeyModal();
+                });
+                window.electronAPI.onTrigger('show-dropbox-key-modal', () => {
+                    showDropboxKeyModal();
+                });
+                window.electronAPI.onTrigger('dropbox-key-saved-success', () => {
+                    showToast('Dropbox 앱 키가 성공적으로 저장되었습니다.');
+                });
+            }
+        });    </script>
+    <!-- [신규] Dropbox 앱 키 입력 모달 -->
+    <div id="dropbox-key-modal" class="modal-overlay modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div class="modal-content bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl m-4">
+            <h3 class="text-xl font-semibold mb-4">Dropbox 앱 키 설정</h3>
+            <form id="dropbox-key-form">
+                <div class="mb-4">
+                    <label for="dropbox-key-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dropbox 앱 키</label>
+                    <input type="password" id="dropbox-key-input" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <p class="text-xs text-gray-500 mt-2">Dropbox 개발자 콘솔에서 발급받은 앱 키를 입력하세요. 입력된 정보는 로컬에 저장됩니다.</p>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" id="cancel-dropbox-key-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-md transition-colors">취소</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md transition-colors">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- [신규] 전역 단축키 설정 모달 -->
+    <div id="shortcut-modal" class="modal-overlay modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div class="modal-content bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-xl m-4">
+            <h3 class="text-xl font-semibold mb-4">전역 단축키 설정</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                아래 입력 상자를 클릭하고, 프로그램을 화면에 표시할 때 사용할 키 조합을 누르세요. (예: Ctrl+Shift+Space)
+            </p>
+            <div class="mb-4">
+                <label for="shortcut-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">단축키</label>
+                <input type="text" id="shortcut-input" placeholder="단축키를 입력하세요..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 rounded-md shadow-sm text-center font-semibold" readonly>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="clear-shortcut-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md transition-colors">단축키 지우기</button>
+                <button type="button" id="cancel-shortcut-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 rounded-md transition-colors">취소</button>
+                <button type="button" id="save-shortcut-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md transition-colors">저장</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
 
