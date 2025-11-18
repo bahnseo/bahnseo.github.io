@@ -2465,29 +2465,37 @@
                 filterInput.addEventListener('input', (e) => {
                     const searchTerm = e.target.value.toLowerCase().trim();
                     const categories = document.querySelectorAll('#main-content section');
+                    const displayStyle = currentViewMode === 'list' ? 'flex' : 'block';
 
                     categories.forEach(category => {
-                        const sites = category.querySelectorAll('.site-card');
+                        const sites = category.querySelectorAll('.site-card, .site-list-item');
                         let isCategoryVisible = false;
 
                         sites.forEach(site => {
-                            const name = site.querySelector('h3').textContent.toLowerCase();
-                            const description = site.querySelector('p').textContent.toLowerCase();
-                            // [신규] URL도 검색 대상에 포함
-                            const url = site.href.toLowerCase();
+                            const name = site.querySelector('h3')?.textContent.toLowerCase() || '';
+                            const description = site.querySelector('p')?.textContent.toLowerCase() || '';
+                            const url = site.href ? site.href.toLowerCase() : '';
 
-                            if (name.includes(searchTerm) || description.includes(searchTerm) || url.includes(searchTerm)) {
-                                site.classList.remove('hidden');
+                            if (!searchTerm || name.includes(searchTerm) || description.includes(searchTerm) || url.includes(searchTerm)) {
+                                site.style.display = displayStyle;
                                 isCategoryVisible = true;
                             } else {
-                                site.classList.add('hidden');
+                                site.style.display = 'none';
                             }
                         });
 
-                        if (isCategoryVisible) {
-                            category.classList.remove('hidden');
+                        // 카테고리 자체의 표시 여부 결정
+                        if (isCategoryVisible || !searchTerm) {
+                            category.style.display = 'block';
                         } else {
-                            category.classList.add('hidden');
+                            // '자주 방문하는 사이트' 카테고리는 검색어가 있어도 항상 보이도록 예외 처리
+                            if (category.id === 'category-popular') {
+                                // 단, 인기 사이트 내에 보이는 아이템이 하나도 없다면 숨김
+                                const hasVisiblePopular = Array.from(sites).some(item => item.style.display !== 'none');
+                                category.style.display = hasVisiblePopular ? 'block' : 'none';
+                            } else {
+                                category.style.display = 'none';
+                            }
                         }
                     });
                 });
