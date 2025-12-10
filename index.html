@@ -1,1 +1,772 @@
-로딩 실패 !!!
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master's Offline Calculator</title>
+    <style>
+        /* --- 1. CSS Variables & Theme Definitions --- */
+        :root {
+            /* Default Dark Theme (Slate Palette) */
+            --bg-page: #020617; /* slate-950 */
+            --bg-card: #0f172a; /* slate-900 */
+            --bg-panel: #1e293b; /* slate-800 */
+            --bg-input: #0f172a;
+            --bg-hover: #334155; /* slate-700 */
+            
+            --text-main: #f8fafc; /* slate-50 */
+            --text-muted: #94a3b8; /* slate-400 */
+            --text-accent: #22d3ee; /* cyan-400 */
+            --text-error: #f87171; /* red-400 */
+            
+            --primary: #06b6d4; /* cyan-500 */
+            --primary-fg: #ffffff;
+            
+            --border: #1e293b;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Light Theme Overrides */
+        body.light-mode {
+            --bg-page: #f1f5f9; /* slate-100 */
+            --bg-card: #ffffff; /* white */
+            --bg-panel: #f8fafc; /* slate-50 */
+            --bg-input: #ffffff;
+            --bg-hover: #e2e8f0; /* slate-200 */
+            
+            --text-main: #0f172a; /* slate-900 */
+            --text-muted: #64748b; /* slate-500 */
+            --text-accent: #0891b2; /* cyan-600 (darker for readability) */
+            --text-error: #ef4444; /* red-500 */
+            
+            --primary: #06b6d4; /* cyan-500 */
+            --primary-fg: #ffffff;
+            
+            --border: #cbd5e1; /* slate-300 */
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* --- 2. Layout Components --- */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 750px;
+            background-color: var(--bg-card);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-card);
+        }
+
+        .header-title { font-size: 1.125rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .led { width: 0.75rem; height: 0.75rem; background-color: var(--primary); border-radius: 50%; box-shadow: 0 0 10px rgba(6,182,212,0.5); }
+        
+        /* Theme Toggle Switch */
+        .theme-toggle {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 52px;
+            height: 28px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+        
+        .theme-icon {
+            font-size: 14px;
+            line-height: 1;
+            z-index: 1;
+            color: var(--text-muted);
+        }
+        
+        .theme-knob {
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 22px;
+            height: 22px;
+            background-color: var(--text-main);
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        
+        body.light-mode .theme-knob {
+            transform: translateX(24px);
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        body.light-mode .theme-toggle {
+            background-color: #e2e8f0;
+        }
+
+        /* --- 3. Tabs --- */
+        .tabs {
+            display: flex;
+            background-color: var(--bg-panel);
+            padding: 0.25rem;
+            margin: 1rem 1rem 0;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.625rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active { background-color: var(--bg-hover); color: var(--text-main); font-weight: 600; box-shadow: 0 1px 2px 0 var(--shadow); }
+        .tab-btn:hover:not(.active) { color: var(--text-main); }
+
+        /* --- 4. Content Area --- */
+        .content { flex: 1; padding: 1rem; overflow: hidden; position: relative; }
+        .view-section { display: none; height: 100%; flex-direction: column; }
+        .view-section.active { display: flex; }
+
+        /* --- 5. Calculator Styles --- */
+        .calc-display {
+            background-color: var(--bg-panel);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: right;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .calc-history { color: var(--text-muted); font-size: 0.875rem; height: 1.5rem; overflow: hidden; margin-bottom: 0.25rem; }
+        
+        .calc-main { 
+            font-size: 2.25rem; 
+            font-weight: 700; 
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            text-align: right;
+            outline: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; flex: 1; }
+        .btn {
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-num { background-color: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-num:hover { background-color: var(--bg-hover); }
+        .btn-op { background-color: var(--bg-hover); color: var(--text-accent); border: 1px solid var(--border); }
+        .btn-clear { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-eq { background-color: var(--primary); color: var(--primary-fg); box-shadow: 0 4px 6px -1px rgba(6, 182, 212, 0.3); }
+        .btn-bs { background-color: var(--bg-hover); color: #f97316; border: 1px solid var(--border); }
+
+        /* --- 6. Converter Styles --- */
+        .type-selector { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        .type-btn {
+            background-color: var(--bg-panel); color: var(--text-muted);
+            border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; cursor: pointer; white-space: nowrap;
+        }
+        .type-btn.active { background-color: var(--primary); color: var(--primary-fg); border-color: var(--primary); }
+        
+        .converter-card {
+            background-color: var(--bg-panel); padding: 1.5rem; border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem;
+        }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .input-row { display: flex; gap: 0.5rem; }
+        .input-field, .select-field {
+            background-color: var(--bg-input); border: 1px solid var(--border);
+            color: var(--text-main); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.125rem; outline: none;
+        }
+        .input-field:focus { border-color: var(--primary); }
+        .input-field { flex: 1; }
+        .select-field { width: 100px; }
+        .result-display {
+            flex: 1; background-color: rgba(0, 0, 0, 0.2); border: 1px solid var(--border);
+            color: var(--text-accent); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; font-weight: 700;
+            display: flex; align-items: center; overflow-x: auto;
+        }
+        /* Light mode adjustment for result display background */
+        body.light-mode .result-display { background-color: #f1f5f9; }
+
+        .rate-status-bar {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: var(--bg-panel);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .status-success { color: var(--text-accent); }
+        .status-error { color: var(--text-error); }
+
+        /* --- 7. Scenario Styles --- */
+        .scenario-vars {
+            background-color: var(--bg-panel); padding: 1rem; border-radius: 0.75rem;
+            border: 1px solid var(--border); margin-bottom: 1rem; max-height: 200px; overflow-y: auto;
+        }
+        .var-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+        .var-name { width: 35%; }
+        .var-val { flex: 1; text-align: right; }
+        .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.25rem; }
+        .icon-btn:hover { color: var(--text-error); }
+        
+        .add-btn {
+            width: 100%; padding: 0.5rem; background-color: var(--bg-hover); color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem;
+        }
+        .add-btn:hover { background-color: var(--bg-input); color: var(--text-main); }
+
+        .formula-area {
+            width: 100%; background-color: var(--bg-panel); color: var(--text-main);
+            padding: 0.75rem; border-radius: 0.75rem; border: 1px solid var(--border);
+            height: 6rem; font-family: monospace; font-size: 0.875rem; resize: none; margin-bottom: 1rem;
+        }
+        
+        .scenario-result {
+            background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border);
+            padding: 1.5rem; border-radius: 0.75rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .scenario-result::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--primary);
+        }
+
+        /* Footer */
+        .footer { padding: 0.75rem; text-align: center; font-size: 0.625rem; color: var(--text-muted); border-top: 1px solid var(--border); background-color: var(--bg-card); }
+        
+        /* Utility */
+        .hidden { display: none !important; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-panel); }
+        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <div class="led"></div> Master's Calculator
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <!-- Version Badge -->
+                <span class="status-badge" style="background: var(--bg-panel); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted);">v2.2</span>
+                
+                <!-- Theme Toggle -->
+                <div class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-icon">☀️</span>
+                    <div class="theme-knob"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('basic')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+                계산기
+            </button>
+            <button class="tab-btn" onclick="switchTab('converter')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                변환기
+            </button>
+            <button class="tab-btn" onclick="switchTab('scenario')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4h6z"/><path d="M9 21H5a2 2 0 0 1-2-2v-4h6z"/><path d="M19 3h-4v6h6V5a2 2 0 0 0-2-2z"/><path d="M19 21h-4v-6h6v4a2 2 0 0 1-2 2z"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+                시나리오
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            
+            <!-- 1. Basic Calculator -->
+            <div id="view-basic" class="view-section active">
+                <div class="calc-display">
+                    <div class="calc-history" id="calc-history"></div>
+                    <input type="text" class="calc-main" id="calc-display" value="0" inputmode="none" placeholder="0">
+                </div>
+                <div class="calc-grid" id="calc-buttons">
+                    <!-- Buttons injected by JS -->
+                </div>
+            </div>
+
+            <!-- 2. Converter -->
+            <div id="view-converter" class="view-section">
+                <div class="type-selector" id="conv-types">
+                    <!-- Types injected by JS -->
+                </div>
+                
+                <div id="rate-status" class="rate-status-bar hidden"></div>
+
+                <div class="converter-card">
+                    <div class="input-group">
+                        <label>FROM</label>
+                        <div class="input-row">
+                            <input type="number" id="conv-amount" class="input-field" value="1" oninput="runConvert()">
+                            <select id="conv-from" class="select-field" onchange="runConvert()"></select>
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: var(--text-muted);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+                    <div class="input-group">
+                        <label>TO</label>
+                        <div class="input-row">
+                            <div id="conv-result" class="result-display">0</div>
+                            <select id="conv-to" class="select-field" onchange="runConvert()"></select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Custom Rate Editor -->
+                <div style="margin-top: 1rem; background: var(--bg-panel); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-shrink: 0;">
+                        <span style="color: var(--text-muted); font-weight: bold;">기준 환율 (1 단위 당 KRW 가격)</span>
+                        <button onclick="toggleRateEdit()" style="background: none; border: none; color: var(--text-accent); cursor: pointer;">편집</button>
+                    </div>
+                    <div id="rate-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; overflow-y: auto; padding-right: 0.25rem;"></div>
+                </div>
+            </div>
+
+            <!-- 3. Scenario -->
+            <div id="view-scenario" class="view-section">
+                <div class="scenario-vars">
+                    <h3 style="font-size: 0.875rem; color: var(--text-accent); margin-bottom: 0.75rem; font-weight: bold;">변수 정의 (Variables)</h3>
+                    <div id="var-list"></div>
+                    <button class="add-btn" onclick="addVariable()">+ 변수 추가</button>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; margin-bottom: 0.5rem;">계산 수식 (FORMULA)</label>
+                    <textarea id="scenario-formula" class="formula-area" oninput="runScenario()">(매입가 * 수량) * (환율 / 1000)</textarea>
+                    
+                    <div class="scenario-result">
+                        <span style="color: var(--text-accent); font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 0.25rem;">RESULT</span>
+                        <span id="scenario-result-val" style="font-size: 2rem; font-weight: bold; color: var(--text-main);">0</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Designed for Asset Management Efficiency
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Pure JavaScript Logic
+         */
+
+        // --- Theme Logic ---
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('calculator-theme', isLight ? 'light' : 'dark');
+        }
+
+        // Initialize Theme from LocalStorage
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('calculator-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        })();
+
+
+        // --- Tab Switching ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.getElementById('view-' + tabId).classList.add('active');
+        }
+
+        // --- 1. Calculator Logic ---
+        let calcDisplay = '0';
+        let calcWaiting = false;
+
+        const calcBtns = [
+            ['C', 'clear'], ['(', 'op'], [')', 'op'], ['÷', 'op'],
+            ['7', 'num'], ['8', 'num'], ['9', 'num'], ['×', 'op'],
+            ['4', 'num'], ['5', 'num'], ['6', 'num'], ['-', 'op'],
+            ['1', 'num'], ['2', 'num'], ['3', 'num'], ['+', 'op'],
+            ['BS', 'bs'], ['0', 'num'], ['.', 'num'], ['=', 'eq']
+        ];
+
+        const calcGrid = document.getElementById('calc-buttons');
+        
+        calcBtns.forEach(([text, type]) => {
+            const btn = document.createElement('button');
+            btn.className = `btn btn-${type === 'bs' ? 'bs' : type === 'clear' ? 'clear' : type === 'eq' ? 'eq' : type === 'op' ? 'op' : 'num'}`;
+            btn.textContent = text === 'BS' ? '⌫' : text;
+            
+            btn.onclick = () => {
+                if (type === 'clear') {
+                    calcDisplay = '0';
+                    calcWaiting = false;
+                } else if (type === 'bs') {
+                    if(calcDisplay.length > 1) calcDisplay = calcDisplay.slice(0, -1);
+                    else calcDisplay = '0';
+                } else if (type === 'eq') {
+                    try {
+                        const expr = calcDisplay.replace(/×/g, '*').replace(/÷/g, '/').replace(/,/g, '');
+                        const res = new Function('return ' + expr)();
+                        document.getElementById('calc-history').textContent = `${calcDisplay} =`;
+                        calcDisplay = String(res);
+                        calcWaiting = true;
+                    } catch(e) {
+                        calcDisplay = 'Error';
+                        calcWaiting = true;
+                    }
+                } else {
+                    if (calcWaiting && type === 'num') {
+                        calcDisplay = text;
+                        calcWaiting = false;
+                    } else {
+                        calcDisplay = calcDisplay === '0' ? text : calcDisplay + text;
+                    }
+                    if(type === 'op') calcWaiting = false;
+                }
+                updateCalcDisplay();
+            };
+            calcGrid.appendChild(btn);
+        });
+
+        // Initialize Display Event Listeners (Paste Support)
+        const displayInput = document.getElementById('calc-display');
+        
+        displayInput.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const clipboardData = (e.clipboardData || window.clipboardData).getData('text');
+            // Remove commas and allow digits and operators
+            const sanitized = clipboardData.replace(/,/g, '').replace(/[^0-9.+\-*/()]/g, '');
+            
+            if (sanitized) {
+                calcDisplay = sanitized;
+                calcWaiting = false;
+                updateCalcDisplay();
+            }
+        });
+
+        function updateCalcDisplay() {
+            const displayEl = document.getElementById('calc-display');
+            if (calcDisplay === 'Error') {
+                displayEl.value = 'Error';
+                return;
+            }
+            const parts = calcDisplay.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            displayEl.value = parts.join('.'); // Updated to use .value for input
+        }
+
+        // --- 2. Converter Logic ---
+        const convData = {
+            currency: { units: [], label: '환율' },
+            length: { units: ['m', 'cm', 'mm', 'km', 'inch', 'ft'], label: '길이', ratio: { m: 1, cm: 0.01, mm: 0.001, km: 1000, inch: 0.0254, ft: 0.3048 } },
+            weight: { units: ['kg', 'g', 'lb', 'oz'], label: '무게', ratio: { kg: 1, g: 0.001, lb: 0.453592, oz: 0.0283495 } },
+            area: { units: ['m²', '평', 'ft²'], label: '넓이', ratio: { 'm²': 1, '평': 3.30579, 'ft²': 0.092903 } }
+        };
+
+        let currentConvType = 'currency';
+        // Default Fallback Rates
+        let customRates = { USD: 1435.50, JPY: 9.55, EUR: 1520.20, CNY: 198.10, KRW: 1 };
+        let rateEditMode = false;
+        let isOnline = true;
+
+        async function fetchLiveRates() {
+            const statusEl = document.getElementById('rate-status');
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = "환율 정보 업데이트 중...";
+            statusEl.className = "rate-status-bar status-success";
+
+            try {
+                // Fetch rates relative to KRW from a free public API
+                const res = await fetch('https://open.er-api.com/v6/latest/KRW');
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                
+                // The API returns "How many OtherCurrency per 1 KRW".
+                // We need "Price of 1 OtherCurrency in KRW" (inverse).
+                // API: USD = 0.0007 (1 KRW = 0.0007 USD) -> 1 USD = 1/0.0007 KRW
+                
+                const newRates = { KRW: 1 };
+                // Prioritize major currencies at top
+                const major = ['USD', 'JPY', 'EUR', 'CNY', 'GBP', 'AUD', 'CAD'];
+                
+                // Process majors first
+                major.forEach(curr => {
+                   if(data.rates[curr]) {
+                       newRates[curr] = 1 / data.rates[curr];
+                   }
+                });
+
+                // Add rest
+                Object.keys(data.rates).sort().forEach(curr => {
+                    if (!newRates[curr]) {
+                        newRates[curr] = 1 / data.rates[curr];
+                    }
+                });
+
+                customRates = newRates;
+                statusEl.textContent = "최신 환율 적용 완료 (출처: Open Exchange Rates)";
+                isOnline = true;
+            } catch (e) {
+                console.error("Fetch failed", e);
+                statusEl.textContent = "네트워크 문제로 환율 정보를 받을 수 없습니다. (기본 설정 사용)";
+                statusEl.className = "rate-status-bar status-error";
+                isOnline = false;
+            }
+            updateConvOptions();
+            renderRates();
+        }
+
+        function initConverter() {
+            const typeContainer = document.getElementById('conv-types');
+            Object.keys(convData).forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = `type-btn ${key === 'currency' ? 'active' : ''}`;
+                btn.textContent = convData[key].label;
+                btn.onclick = () => {
+                    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentConvType = key;
+                    updateConvOptions();
+                    renderRates();
+                };
+                typeContainer.appendChild(btn);
+            });
+            
+            // Initial Fetch
+            fetchLiveRates();
+        }
+
+        function updateConvOptions() {
+            const data = convData[currentConvType];
+            const fromSel = document.getElementById('conv-from');
+            const toSel = document.getElementById('conv-to');
+            
+            const savedFrom = fromSel.value;
+            const savedTo = toSel.value;
+
+            fromSel.innerHTML = '';
+            toSel.innerHTML = '';
+            
+            // Determine units list
+            let units = [];
+            if(currentConvType === 'currency') {
+                units = Object.keys(customRates);
+            } else {
+                units = data.units;
+            }
+            
+            units.forEach(u => {
+                fromSel.add(new Option(u, u));
+                toSel.add(new Option(u, u));
+            });
+
+            // Restore selection or default
+            if(units.includes(savedFrom)) fromSel.value = savedFrom;
+            else if(currentConvType === 'currency') fromSel.value = 'USD';
+            
+            if(units.includes(savedTo)) toSel.value = savedTo;
+            else if(currentConvType === 'currency') toSel.value = 'KRW';
+            else toSel.value = units[1] || units[0];
+
+            runConvert();
+        }
+
+        function runConvert() {
+            const amt = parseFloat(document.getElementById('conv-amount').value) || 0;
+            const from = document.getElementById('conv-from').value;
+            const to = document.getElementById('conv-to').value;
+            let res = 0;
+
+            if (currentConvType === 'currency') {
+                const fromRate = customRates[from] || 1;
+                const toRate = customRates[to] || 1;
+                // Value in KRW = amt * fromRate
+                // Result in Target = Value in KRW / toRate
+                res = (amt * fromRate) / toRate;
+                document.getElementById('conv-result').textContent = res.toLocaleString(undefined, {maximumFractionDigits: 2});
+            } else {
+                const ratio = convData[currentConvType].ratio;
+                const base = amt * (ratio[from] || 1);
+                res = base / (ratio[to] || 1);
+                document.getElementById('conv-result').textContent = res.toLocaleString(undefined, {maximumFractionDigits: 4});
+            }
+        }
+
+        function renderRates() {
+            const container = document.getElementById('rate-list');
+            container.innerHTML = '';
+            if (currentConvType !== 'currency') {
+                container.parentElement.style.display = 'none';
+                return;
+            }
+            container.parentElement.style.display = 'flex'; // Changed to flex column container for list
+
+            Object.keys(customRates).filter(k => k !== 'KRW').forEach(k => {
+                const div = document.createElement('div');
+                div.style.background = 'var(--bg-input)';
+                div.style.padding = '0.5rem';
+                div.style.borderRadius = '0.25rem';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.border = '1px solid var(--border)';
+                
+                const rateVal = customRates[k];
+                // Display logic: For weak currencies (like VND), rate might be 0.05. Show more decimals.
+                // For strong (USD), rate is 1400. 2 decimals enough.
+                const displayVal = rateVal < 10 ? rateVal.toFixed(4) : rateVal.toLocaleString(undefined, {maximumFractionDigits: 2});
+
+                if (rateEditMode) {
+                    div.innerHTML = `<span style="color:var(--text-muted); font-weight:bold;">${k}</span> <input type="number" value="${rateVal}" style="width:80px; background:var(--bg-panel); color:var(--text-main); border:1px solid var(--border); text-align:right; font-size:0.8rem;" onchange="customRates['${k}'] = parseFloat(this.value); runConvert();">`;
+                } else {
+                    div.innerHTML = `<span style="color:var(--text-muted); font-weight:bold;">${k}</span> <span style="color:var(--text-main); font-size:0.9rem;">${displayVal} 원</span>`;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function toggleRateEdit() {
+            rateEditMode = !rateEditMode;
+            renderRates();
+        }
+
+        // --- 3. Scenario Logic ---
+        let variables = [
+            { id: 1, name: '매입가', value: 50000 },
+            { id: 2, name: '수량', value: 100 },
+            { id: 3, name: '환율', value: 1400 }
+        ];
+
+        function renderVariables() {
+            const list = document.getElementById('var-list');
+            list.innerHTML = '';
+            variables.forEach(v => {
+                const row = document.createElement('div');
+                row.className = 'var-row';
+                row.innerHTML = `
+                    <input class="input-field var-name" style="font-size:0.875rem; padding:0.5rem;" value="${v.name}" oninput="updateVar(${v.id}, 'name', this.value)">
+                    <span style="color:var(--text-muted);">=</span>
+                    <input type="number" class="input-field var-val" style="font-size:0.875rem; padding:0.5rem;" value="${v.value}" oninput="updateVar(${v.id}, 'value', this.value)">
+                    <button class="icon-btn" onclick="removeVar(${v.id})">×</button>
+                `;
+                list.appendChild(row);
+            });
+            runScenario();
+        }
+
+        function addVariable() {
+            const id = Date.now();
+            variables.push({ id, name: '변수', value: 0 });
+            renderVariables();
+        }
+
+        function removeVar(id) {
+            variables = variables.filter(v => v.id !== id);
+            renderVariables();
+        }
+
+        function updateVar(id, key, val) {
+            const v = variables.find(x => x.id === id);
+            if (v) {
+                v[key] = key === 'value' ? (parseFloat(val) || 0) : val;
+                runScenario();
+            }
+        }
+
+        function runScenario() {
+            let formula = document.getElementById('scenario-formula').value;
+            const sortedVars = [...variables].sort((a, b) => b.name.length - a.name.length);
+            
+            sortedVars.forEach(v => {
+                const escapedName = v.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedName, 'g');
+                formula = formula.replace(regex, v.value);
+            });
+
+            try {
+                const sanitized = formula.replace(/[^0-9+\-*/().\s]/g, '');
+                if(!sanitized.trim()) {
+                    document.getElementById('scenario-result-val').textContent = '-';
+                    return;
+                }
+                const res = new Function('return ' + sanitized)();
+                document.getElementById('scenario-result-val').textContent = isNaN(res) ? 'Error' : res.toLocaleString();
+            } catch(e) {
+                document.getElementById('scenario-result-val').textContent = '수식 오류';
+            }
+        }
+
+        // Initialize
+        initConverter();
+        renderVariables();
+
+    </script>
+</body>
+</html>
