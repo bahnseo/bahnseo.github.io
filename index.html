@@ -311,7 +311,7 @@
             
             <div style="display: flex; align-items: center; gap: 10px;">
                 <!-- Version Badge -->
-                <span class="status-badge" style="background: var(--bg-panel); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted);">v2.2</span>
+                <span class="status-badge" style="background: var(--bg-panel); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted);">v1.1.0</span>
                 
                 <!-- Theme Toggle -->
                 <div class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
@@ -505,8 +505,12 @@
             const sanitized = clipboardData.replace(/,/g, '').replace(/[^0-9.+\-*/()]/g, '');
             
             if (sanitized) {
-                calcDisplay = sanitized;
-                calcWaiting = false;
+                if (calcWaiting) {
+                    calcDisplay = sanitized;
+                    calcWaiting = false;
+                } else {
+                    calcDisplay = calcDisplay === '0' ? sanitized : calcDisplay + sanitized;
+                }
                 updateCalcDisplay();
             }
         });
