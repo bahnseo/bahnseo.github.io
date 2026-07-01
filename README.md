@@ -1,2 +1,0 @@
-# bahnseo.github.io
-web
