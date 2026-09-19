@@ -6,7 +6,7 @@
 
 ## 1. 개인정보 및 기기 데이터의 수집과 이용 목적
 
-'앱'은 원칙적으로 사용자를 식별할 수 있는 개인정보를 외부 개발자 서버로 전송하거나 수집하지 않습니다. 런처 설정, 홈 화면 배치, 앱 단축키, 위젯 구성 등의 모든 데이터는 사용자의 기기 내부(Jetpack DataStore 및 Room/SQLite)에만 로컬로 저장됩니다.
+'앱'은 원칙적으로 사용자를 식별할 수 있는 개인정보를 외부 개발자 서버로 전송하거나 수집하지 않습니다. 런처 설정, 홈 화면 배치, 앱 단축키, 위젯 구성 등의 모든 데이터는 사용자의 기기 내부(Jetpack DataStore 및 앱 전용 저장 공간)에만 로컬로 저장됩니다.
 
 단, 원활한 런처 기능 제공 및 인앱 결제, 광고 표시를 위해 다음의 데이터가 로컬에서 처리되거나 제3자(Google) 서비스와 연동될 수 있습니다.
 
@@ -14,7 +14,7 @@
    - **목적**: 기본 홈 화면(런처) 앱으로서 기기에 설치된 앱 목록을 로드하여 홈 그리드 및 앱 서랍에 표시하고, 사용자가 앱을 실행/검색/배치할 수 있도록 지원하기 위해 필수적으로 사용됩니다.
    - **보관 및 전송 여부**: 오직 사용자 기기 메모리 및 로컬 저장소에서만 실시간으로 처리되며, 외부 서버로 절대 수집 또는 전송되지 않습니다.
 2. **연락처 정보 (`READ_CONTACTS` - 선택 사항, Premium 전용)**:
-   - **목적**: 사용자가 검색창에서 직접 연락처를 검색하고 빠른 통화(Call) 및 문자(SMS)를 발송할 수 있도록 지원합니다.
+   - **목적**: 사용자가 검색창에서 직접 연락처를 검색하고, 검색 결과에서 전화 앱의 발신 화면과 문자 앱의 작성 화면을 바로 열 수 있도록 지원합니다. 앱이 직접 전화를 걸거나 문자를 발송하지는 않습니다.
    - **보관 및 전송 여부**: 기기 로컬의 연락처 데이터베이스를 실시간으로 검색 필터링하는 데에만 사용되며, 연락처 목록을 별도로 저장하거나 외부 서버로 일체 전송하지 않습니다.
 3. **인앱 결제 데이터 (Google Play Billing v7.x)**:
    - **목적**: Keyrium Premium 1회성 영구 구매 및 구매 복원(Restore Purchases) 처리를 위해 구글 플레이 결제 시스템과 통신합니다.
@@ -29,6 +29,12 @@
 6. **접근성 서비스 (선택 사항)**:
    - **목적**: 사용자가 접근성 설정에서 직접 허용한 경우, ① 홈 화면 빈 공간 두 번 탭으로 화면 끄기(생체 잠금 유지), ② 상단바에서 알림 패널 열기 두 가지 시스템 동작만 수행합니다.
    - **보관 및 전송 여부**: 화면 내용을 읽지 않으며 어떤 데이터도 수집·저장·전송하지 않습니다.
+7. **사용자가 직접 고른 파일 및 진단 로그 (선택 사항)**:
+   - **목적**: 사용자가 직접 고른 배경화면 이미지, 사용자 지정 글꼴·타건음·아이콘 파일과 홈 화면 백업 파일(`.json`)을 사용하고, 설정에서 진단 로그를 켠 경우 문제 분석용 로그를 앱 전용 저장 공간에 기록합니다.
+   - **보관 및 전송 여부**: 모두 기기 안에만 저장되며 자동으로 전송되지 않습니다. 사용자가 설정의 `[개발자에게 로그 보내기]`를 눌러 이메일 등 공유 앱을 직접 선택해 보낸 경우에만 개발자에게 전달됩니다.
+8. **음성 검색 및 외부 앱 연동 (선택 사항)**:
+   - **목적**: 마이크 키는 기기에 설치된 음성 인식 앱을 호출하여 검색어를 받아옵니다. 검색창의 `g`·`y`·`naver` 명령은 입력한 검색어를 해당 검색 앱 또는 브라우저에 전달하고, `c`·`m`·`al`·`t` 명령은 전화·문자·시계 앱을 엽니다.
+   - **보관 및 전송 여부**: Keyrium은 마이크 권한을 요청하지 않으며 음성을 녹음·저장하지 않습니다. 음성 처리와 검색은 사용자가 선택한 외부 앱이 해당 앱의 개인정보 처리방침에 따라 수행하며, 사용자가 명령을 실행했을 때에만 이루어집니다.
 
 ---
 
@@ -49,6 +55,8 @@
 | `com.android.alarm.permission.SET_ALARM` | 필수 | 검색창 퀵 액션의 알람·타이머를 시스템 시계 앱에 등록 |
 | `BIND_APPWIDGET` | 필수 (매니페스트 선언) | 홈 화면 위젯 바인딩 (기본 홈 앱 지정 시 시스템이 자동 승인) |
 | `com.google.android.gms.permission.AD_ID` | 필수 (AdMob SDK) | AdMob 광고 ID (Free 버전 광고 전용, EEA/UK 는 UMP 동의 후에만 사용) |
+| `ACCESS_ADSERVICES_AD_ID`, `ACCESS_ADSERVICES_ATTRIBUTION`, `ACCESS_ADSERVICES_TOPICS` | SDK 포함 (Google 광고 SDK) | Android 개인정보 보호 샌드박스 기반 광고 측정 (Free 버전 광고 전용) |
+| `WAKE_LOCK`, `FOREGROUND_SERVICE` | SDK 포함 (Google 광고·백그라운드 작업 라이브러리) | 광고 SDK의 내부 작업 처리. 앱이 자체적으로 포그라운드 서비스를 실행하지는 않습니다. |
 | `com.android.vending.BILLING` | 필수 | Google Play Billing 인앱 결제 연동 |
 
 ---
@@ -58,6 +66,7 @@
 모든 설정 및 런처 구성 데이터는 사용자 기기 내 로컬 샌드박스 영역에만 보관됩니다.
 - 사용자가 앱을 기기에서 삭제(제거)하거나 '앱 데이터 삭제'를 실행하면, 모든 로컬 데이터는 즉시 영구 파기됩니다.
 - 로컬 백업 파일(`.json`)을 생성한 경우, 해당 파일은 사용자가 지정한 저장 경로에만 존재하며 사용자가 직접 파일을 삭제하여 파기할 수 있습니다.
+- 진단 로그 파일(파일당 최대 2MB, 최근 5개만 유지)은 앱 전용 저장 공간에 있으며, 설정에서 삭제하거나 앱 데이터를 삭제하면 함께 파기됩니다.
 
 ---
 
@@ -84,6 +93,7 @@
 본 개인정보 처리방침은 법령 개정 또는 서비스 기능 변경에 따라 수정될 수 있습니다.
 - **공고일자**: 2026년 9월 7일
 - **시행일자**: 2026년 9월 7일 (v1.1.0 정식 출시)
+- **최종 수정일자**: 2026년 9월 19일 (실제 앱 동작과 권한 목록에 맞춰 내용 보완)
 
 <br><br>
 
@@ -99,7 +109,7 @@ This Privacy Policy explains how 'Keyrium Launcher' (hereinafter referred to as 
 
 ## 1. Collection and Use of Personal Information & Device Data
 
-In principle, the App does not collect or transmit any personally identifiable information to external developer servers. All launcher preferences, home screen layouts, shortcuts, and widget placements are stored locally on your device (using Jetpack DataStore and Room/SQLite).
+In principle, the App does not collect or transmit any personally identifiable information to external developer servers. All launcher preferences, home screen layouts, shortcuts, and widget placements are stored locally on your device (using Jetpack DataStore and app-private storage).
 
 The following data is processed locally or integrated with Google services to provide core launcher functionality:
 
@@ -107,7 +117,7 @@ The following data is processed locally or integrated with Google services to pr
    - **Purpose**: As a core home screen launcher (`CATEGORY_HOME`), accessing installed applications is indispensable for indexing, displaying, searching, and launching apps from the home screen grid and app drawer.
    - **Storage & Transmission**: Processed in real time only within the local device memory and storage. Never collected, stored, or transmitted to any external server.
 2. **Contacts Information (`READ_CONTACTS` - Optional, Premium Only)**:
-   - **Purpose**: Enables real-time contact search directly within the launcher search bar for rapid dialing and messaging (Call/SMS quick actions).
+   - **Purpose**: Enables real-time contact search directly within the launcher search bar, and opens the phone app's dialer or the messaging app's compose screen from a result. The App itself does not place calls or send messages.
    - **Storage & Transmission**: Processed locally for query matching only upon explicit user runtime consent. Never transmitted to external servers or logged.
 3. **In-App Purchase Data (Google Play Billing v7.x)**:
    - **Purpose**: Manages one-time lifetime Premium purchases and license restoration via Google Play Billing.
@@ -122,6 +132,12 @@ The following data is processed locally or integrated with Google services to pr
 6. **Accessibility Service (Optional)**:
    - **Purpose**: Only when the user enables it in Accessibility settings, the App performs two system actions: (1) turning the screen off on a home-screen double-tap (biometric unlock preserved), and (2) opening the notification shade from the status bar.
    - **Storage & Transmission**: Screen content is never read, and no data is collected, stored, or transmitted.
+7. **User-Selected Files and Diagnostic Logs (Optional)**:
+   - **Purpose**: Uses the wallpaper image, custom font / typing-sound / icon files and home-screen backup file (`.json`) that you choose yourself, and, if you turn diagnostic logging on in Settings, records logs for troubleshooting in app-private storage.
+   - **Storage & Transmission**: All of it stays on your device and is never sent automatically. It reaches the developer only if you tap **Send Log to Developer** in Settings and choose an email or sharing app yourself.
+8. **Voice Search and External App Integration (Optional)**:
+   - **Purpose**: The microphone key launches a voice recognition app already installed on your device and receives the recognized text. The `g`, `y` and `naver` search commands pass the text you typed to the search app or browser, and the `c`, `m`, `al` and `t` commands open the phone, messaging and clock apps.
+   - **Storage & Transmission**: The App does not request the microphone permission and does not record or store audio. Voice processing and searches are performed by the external app you choose under that app's own privacy policy, and only when you run a command.
 
 ---
 
@@ -142,6 +158,8 @@ The App requests only necessary permissions strictly required to perform its sta
 | `com.android.alarm.permission.SET_ALARM` | Essential | Register alarms/timers from search-bar quick actions in the system clock app |
 | `BIND_APPWIDGET` | Essential (Manifest Declaration) | Bind home-screen widgets (auto-granted by the system when set as the default home app) |
 | `com.google.android.gms.permission.AD_ID` | Essential (AdMob SDK) | AdMob advertising ID (Free-tier ads only; used only after UMP consent in the EEA/UK) |
+| `ACCESS_ADSERVICES_AD_ID`, `ACCESS_ADSERVICES_ATTRIBUTION`, `ACCESS_ADSERVICES_TOPICS` | Included by SDK (Google ads SDK) | Ad measurement based on the Android Privacy Sandbox (Free-tier ads only) |
+| `WAKE_LOCK`, `FOREGROUND_SERVICE` | Included by SDK (Google ads / background-work libraries) | Internal task handling of the ads SDK. The App does not run a foreground service of its own. |
 | `com.android.vending.BILLING` | Essential | In-App Purchases for Keyrium Premium |
 
 ---
@@ -151,6 +169,7 @@ The App requests only necessary permissions strictly required to perform its sta
 All user preferences and launcher settings reside strictly within the app's local sandbox storage on your device.
 - Uninstalling the App or clearing app data in Android Settings permanently and immediately erases all stored data.
 - User-created backup files (`.json`) are stored solely at the storage location selected by the user and can be deleted directly at any time.
+- Diagnostic log files (up to 2 MB each, only the latest 5 kept) live in app-private storage and are erased when you delete them in Settings or clear the app data.
 
 ---
 
@@ -177,3 +196,4 @@ If you have any questions or concerns regarding this Privacy Policy, please cont
 This Privacy Policy is effective as of the official release date and may be updated in accordance with applicable laws or feature updates.
 - **Published Date**: September 7, 2026
 - **Effective Date**: September 7, 2026 (v1.1.0 Global Release)
+- **Last Revised**: September 19, 2026 (updated to match the App's actual behavior and permission list)
