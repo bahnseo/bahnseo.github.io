@@ -16,7 +16,7 @@
 2. **연락처 정보 (`READ_CONTACTS` - 선택 사항, Premium 전용)**:
    - **목적**: 사용자가 검색창에서 직접 연락처를 검색하고, 검색 결과에서 전화 앱의 발신 화면과 문자 앱의 작성 화면을 바로 열 수 있도록 지원합니다. 앱이 직접 전화를 걸거나 문자를 발송하지는 않습니다.
    - **보관 및 전송 여부**: 기기 로컬의 연락처 데이터베이스를 실시간으로 검색 필터링하는 데에만 사용되며, 연락처 목록을 별도로 저장하거나 외부 서버로 일체 전송하지 않습니다.
-3. **인앱 결제 데이터 (Google Play Billing v7.x)**:
+3. **인앱 결제 데이터 (Google Play Billing)**:
    - **목적**: Keyrium Premium 1회성 영구 구매 및 구매 복원(Restore Purchases) 처리를 위해 구글 플레이 결제 시스템과 통신합니다.
    - **보관 및 전송 여부**: 결제 토큰 및 구매 확인 데이터는 구글 플레이 서버에서 안전하게 관리되며, 기기 내부에는 라이선스 활성화 여부만 안전하게 캐싱됩니다.
 4. **광고 관련 데이터 (Google AdMob)**:
@@ -35,6 +35,9 @@
 8. **음성 검색 및 외부 앱 연동 (선택 사항)**:
    - **목적**: 마이크 키는 기기에 설치된 음성 인식 앱을 호출하여 검색어를 받아옵니다. 검색창의 `g`·`y`·`naver` 명령은 입력한 검색어를 해당 검색 앱 또는 브라우저에 전달하고, `c`·`m`·`al`·`t` 명령은 전화·문자·시계 앱을 엽니다.
    - **보관 및 전송 여부**: Keyrium은 마이크 권한을 요청하지 않으며 음성을 녹음·저장하지 않습니다. 음성 처리와 검색은 사용자가 선택한 외부 앱이 해당 앱의 개인정보 처리방침에 따라 수행하며, 사용자가 명령을 실행했을 때에만 이루어집니다.
+9. **다른 앱에서 쓰는 키보드 (선택 사항, Premium 전용)**:
+   - **목적**: 설정에서 사용자가 직접 시스템 키보드 목록에 켜고 선택한 경우, 'Keyrium 키보드'를 홈 화면뿐 아니라 다른 앱의 입력창에서도 쓸 수 있도록 시스템 입력기로 등록합니다.
+   - **보관 및 전송 여부**: 이 키보드로 입력한 내용은 기기 안에서만 처리되며, 어떤 형태로도 저장·기록하거나 외부로 전송하지 않습니다. 자동 완성·단어 추천·클라우드 동기화 기능이 없어 입력 내용을 서버로 보낼 이유 자체가 없습니다.
 
 ---
 
@@ -48,6 +51,7 @@
 | `READ_CONTACTS` | 선택 (런타임 권한, Premium 전용) | 통합 검색창에서 연락처 실시간 검색 및 빠른 전화/문자 발송 |
 | 알림 접근 (`BIND_NOTIFICATION_LISTENER_SERVICE`) | 선택 (사용자가 시스템 설정에서 직접 활성화, Premium 전용) | 앱 아이콘·폴더의 읽지 않은 알림 개수 뱃지 및 상단바 알림 인디케이터 표시. 알림 내용을 읽거나 저장하지 않고 개수만 집계하며 외부로 전송하지 않습니다. |
 | 접근성 서비스 (`BIND_ACCESSIBILITY_SERVICE`) | 선택 (사용자가 접근성 설정에서 직접 활성화) | ① 홈 화면 빈 공간 두 번 탭 시 화면 끄기(지문·얼굴 잠금 해제 유지), ② 상단바에서 알림 패널 열기. 화면 내용을 읽지 않으며(`canRetrieveWindowContent=false`) 어떤 데이터도 수집·전송하지 않습니다. |
+| 시스템 입력기 등록 (`BIND_INPUT_METHOD`) | 선택 (사용자가 시스템 설정에서 직접 활성화, Premium 전용) | 다른 앱에서도 Keyrium 키보드를 쓸 수 있도록 시스템 입력기로 등록. 입력한 내용은 기기 안에서만 처리하며 저장·전송하지 않습니다. |
 | `INTERNET` | 필수 | 구글 플레이 인앱 결제 라이선스 검증 및 AdMob 광고 로드 |
 | `ACCESS_NETWORK_STATE` | 필수 | 상단바 Wi-Fi/모바일 네트워크 연결 상태 아이콘 표시, 결제·광고 네트워크 가용성 확인 |
 | `VIBRATE` | 필수 | 가상 쿼티 키보드 타건 햅틱, 트랙패드·드래그·더블탭 피드백 |
@@ -93,7 +97,7 @@
 본 개인정보 처리방침은 법령 개정 또는 서비스 기능 변경에 따라 수정될 수 있습니다.
 - **공고일자**: 2026년 9월 7일
 - **시행일자**: 2026년 9월 7일 (v1.1.0 정식 출시)
-- **최종 수정일자**: 2026년 9월 19일 (실제 앱 동작과 권한 목록에 맞춰 내용 보완)
+- **최종 수정일자**: 2026년 9월 22일 (다른 앱에서 쓰는 Keyrium 키보드(시스템 입력기) 기능 추가에 따른 항목 보완)
 
 <br><br>
 
@@ -119,7 +123,7 @@ The following data is processed locally or integrated with Google services to pr
 2. **Contacts Information (`READ_CONTACTS` - Optional, Premium Only)**:
    - **Purpose**: Enables real-time contact search directly within the launcher search bar, and opens the phone app's dialer or the messaging app's compose screen from a result. The App itself does not place calls or send messages.
    - **Storage & Transmission**: Processed locally for query matching only upon explicit user runtime consent. Never transmitted to external servers or logged.
-3. **In-App Purchase Data (Google Play Billing v7.x)**:
+3. **In-App Purchase Data (Google Play Billing)**:
    - **Purpose**: Manages one-time lifetime Premium purchases and license restoration via Google Play Billing.
    - **Storage & Transmission**: All payment transactions are securely handled by Google Play. Only the local purchase state is cached securely on your device.
 4. **Advertising Data (Google AdMob)**:
@@ -138,6 +142,9 @@ The following data is processed locally or integrated with Google services to pr
 8. **Voice Search and External App Integration (Optional)**:
    - **Purpose**: The microphone key launches a voice recognition app already installed on your device and receives the recognized text. The `g`, `y` and `naver` search commands pass the text you typed to the search app or browser, and the `c`, `m`, `al` and `t` commands open the phone, messaging and clock apps.
    - **Storage & Transmission**: The App does not request the microphone permission and does not record or store audio. Voice processing and searches are performed by the external app you choose under that app's own privacy policy, and only when you run a command.
+9. **Keyboard Usable in Other Apps (Optional, Premium Only)**:
+   - **Purpose**: When the user turns it on and selects it from the system keyboard list in Settings, 'Keyrium Keyboard' is registered as a system input method so it can be used in other apps' text fields, not just the home screen.
+   - **Storage & Transmission**: Everything typed with this keyboard is processed only on the device and is never stored, logged, or transmitted in any form. There is no autocomplete, word suggestion, or cloud sync, so there is nothing that would need to be sent to a server in the first place.
 
 ---
 
@@ -151,6 +158,7 @@ The App requests only necessary permissions strictly required to perform its sta
 | `READ_CONTACTS` | Optional (Runtime, Premium Only) | Just-in-time contact search in the search bar with instant Call/SMS actions |
 | Notification access (`BIND_NOTIFICATION_LISTENER_SERVICE`) | Optional (enabled by the user in system settings, Premium Only) | Shows an unread-count badge on app icons/folders and a notification indicator in the status bar. Counts only — notification content is never read, stored, or transmitted. |
 | Accessibility Service (`BIND_ACCESSIBILITY_SERVICE`) | Optional (enabled by the user in Accessibility Settings) | (1) Turn the screen off on a home-screen double-tap, keeping fingerprint/face unlock; (2) open the notification shade from the status bar. Screen content is never read (`canRetrieveWindowContent=false`) and no data is collected or transmitted. |
+| System input method registration (`BIND_INPUT_METHOD`) | Optional (enabled by the user in system settings, Premium Only) | Registers Keyrium Keyboard as a system input method so it can be used in other apps. Everything typed is processed only on the device and never stored or transmitted. |
 | `INTERNET` | Essential | Google Play Billing license verification and AdMob ad delivery |
 | `ACCESS_NETWORK_STATE` | Essential | Wi-Fi / mobile network status icons in the status bar; billing and ad network availability checks |
 | `VIBRATE` | Essential | Haptic feedback for the virtual QWERTY keyboard, trackpad, drag, and double-tap gestures |
@@ -196,4 +204,4 @@ If you have any questions or concerns regarding this Privacy Policy, please cont
 This Privacy Policy is effective as of the official release date and may be updated in accordance with applicable laws or feature updates.
 - **Published Date**: September 7, 2026
 - **Effective Date**: September 7, 2026 (v1.1.0 Global Release)
-- **Last Revised**: September 19, 2026 (updated to match the App's actual behavior and permission list)
+- **Last Revised**: September 22, 2026 (added entries for the new Keyrium Keyboard system input method feature usable in other apps)
